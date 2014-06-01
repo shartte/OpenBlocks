@@ -7,7 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import openblocks.Config;
 import openblocks.OpenBlocks;
@@ -21,7 +21,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ItemStencil extends Item {
 
 	public ItemStencil() {
-		super(Config.itemStencilId);
+
 		setCreativeTab(OpenBlocks.tabOpenBlocks);
 		setHasSubtypes(true);
 	}
@@ -33,15 +33,15 @@ public class ItemStencil extends Item {
 	}
 
 	@Override
-	public Icon getIconFromDamage(int dmg) {
+	public IIcon getIconFromDamage(int dmg) {
 		return Stencil.values()[dmg].getCoverBlockIcon();
 	}
 
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void getSubItems(int id, CreativeTabs par2CreativeTabs, List list) {
+	public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List list) {
 		for (Stencil stencil : Stencil.values()) {
-			list.add(new ItemStack(id, 1, stencil.ordinal()));
+			list.add(new ItemStack(item, 1, stencil.ordinal()));
 		}
 	}
 
@@ -52,7 +52,7 @@ public class ItemStencil extends Item {
 			BlockCanvas.replaceBlock(world, x, y, z);
 		}
 
-		TileEntity te = world.getBlockTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(x, y, z);
 
 		if (te instanceof TileEntityCanvas) {
 			TileEntityCanvas canvas = (TileEntityCanvas)te;

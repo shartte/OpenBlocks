@@ -7,8 +7,8 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.IIcon;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.OpenBlocks;
 import openblocks.common.Stencil;
 import openblocks.common.item.ItemPaintBrush;
@@ -21,6 +21,7 @@ import openmods.api.ISpecialDrops;
 import openmods.sync.ISyncableObject;
 import openmods.sync.SyncableInt;
 import openmods.sync.SyncableIntArray;
+import openmods.sync.SyncableString;
 import openmods.tileentity.SyncedTileEntity;
 import openmods.utils.BlockNotifyFlags;
 import openmods.utils.BlockUtils;
@@ -32,7 +33,8 @@ public class TileEntityCanvas extends SyncedTileEntity implements IActivateAware
 	public static final int[] ALL_SIDES = { 0, 1, 2, 3, 4, 5 };
 
 	/* Used for painting other blocks */
-	public SyncableInt paintedBlockId, paintedBlockMeta;
+	public SyncableString paintedBlockId;
+  public SyncableInt paintedBlockMeta;
 
 	private SyncableIntArray baseColors;
 
@@ -68,7 +70,7 @@ public class TileEntityCanvas extends SyncedTileEntity implements IActivateAware
 				stencilsDown, stencilsUp, stencilsNorth, stencilsSouth, stencilsWest, stencilsEast
 		};
 		baseColors = new SyncableIntArray(new int[] { 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF });
-		paintedBlockId = new SyncableInt(0);
+		paintedBlockId = new SyncableString();
 		paintedBlockMeta = new SyncableInt(0);
 	}
 
@@ -78,7 +80,7 @@ public class TileEntityCanvas extends SyncedTileEntity implements IActivateAware
 
 	@Override
 	public void onSynced(Set<ISyncableObject> changes) {
-		worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 
 	public Layer getLayerForSide(int renderSide, int layerId) {
@@ -94,7 +96,7 @@ public class TileEntityCanvas extends SyncedTileEntity implements IActivateAware
 		return 0xCCCCCC;
 	}
 
-	public Icon getTextureForRender(int renderSide, int layerId) {
+	public IIcon getTextureForRender(int renderSide, int layerId) {
 		if (layerId > BASE_LAYER) {
 			Layer layer = getLayerForSide(renderSide, layerId);
 			if (layer != null) {
@@ -105,9 +107,10 @@ public class TileEntityCanvas extends SyncedTileEntity implements IActivateAware
 		return getBaseTexture(renderSide);
 	}
 
-	private Icon getBaseTexture(int side) {
-		if (paintedBlockId.getValue() == 0) return OpenBlocks.Blocks.canvas.baseIcon;
-		Block block = Block.blocksList[paintedBlockId.getValue()];
+	private IIcon getBaseTexture(int side) {
+		if (paintedBlockId.getValue() == null)
+      return OpenBlocks.Blocks.canvas.baseIcon;
+		Block block = (Block) Block.blockRegistry.getObject(paintedBlockId.getValue());
 		if (block == null) return OpenBlocks.Blocks.canvas.baseIcon;
 		return block.getIcon(side, paintedBlockMeta.getValue());
 	}
@@ -163,8 +166,9 @@ public class TileEntityCanvas extends SyncedTileEntity implements IActivateAware
 			baseColors.setValue(side, 0xFFFFFF);
 		}
 
-		if (isBlockUnpainted() && paintedBlockId.getValue() != 0) {
-			worldObj.setBlock(xCoord, yCoord, zCoord, paintedBlockId.getValue(), paintedBlockMeta.getValue(), BlockNotifyFlags.SEND_TO_CLIENTS);
+		if (isBlockUnpainted() && paintedBlockId.getValue() != null) {
+      Block block = (Block) Block.blockRegistry.getObject(paintedBlockId.getValue());
+			worldObj.setBlock(xCoord, yCoord, zCoord, block, paintedBlockMeta.getValue(), BlockNotifyFlags.SEND_TO_CLIENTS);
 		}
 
 		if (!worldObj.isRemote) sync();
@@ -213,7 +217,7 @@ public class TileEntityCanvas extends SyncedTileEntity implements IActivateAware
 
 	@Override
 	public void addDrops(List<ItemStack> drops) {
-		if (paintedBlockId.getValue() == 0) {
+		if (paintedBlockId.getValue() == null) {
 			drops.add(new ItemStack(getBlockType()));
 		}
 		for (SyncableBlockLayers sideLayers : allSides) {

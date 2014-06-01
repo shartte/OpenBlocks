@@ -1,5 +1,6 @@
 package openblocks.common.item;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -8,9 +9,9 @@ import openmods.item.ItemOpenBlock;
 
 public class ItemFlagBlock extends ItemOpenBlock {
 
-	public ItemFlagBlock(int id) {
-		super(id);
-	}
+	public ItemFlagBlock(Block block) {
+    super(block);
+  }
 
 	@Override
 	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int par4, int par5, int par6, int par7, float par8, float par9, float par10) {

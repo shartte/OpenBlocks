@@ -8,7 +8,7 @@ package dan200.computercraft.api.turtle;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 
 /**
  * The primary interface for defining an turtle for Turtles. A turtle turtle
@@ -79,13 +79,13 @@ public interface ITurtleUpgrade
 
 	/**
 	 * Called to obtain the Icon to be used when rendering a turtle peripheral. Needs to be a "common"
-	 * type Icon for now, as there is no way to determine which texture sheet an Icon is from by the 
+	 * type IIcon for now, as there is no way to determine which texture sheet an Icon is from by the
 	 * Icon itself.
 	 * @param turtle Access to the turtle that the peripheral resides on.
 	 * @param side Which side of the turtle (left or right) the peripheral resides on.
 	 * @return The Icon that you wish to be used to render your turtle peripheral.
 	 */
-	public Icon getIcon( ITurtleAccess turtle, TurtleSide side );
+	public IIcon getIcon( ITurtleAccess turtle, TurtleSide side );
 
     /**
      * TODO: Document me

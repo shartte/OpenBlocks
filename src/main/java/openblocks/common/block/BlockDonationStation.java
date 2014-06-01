@@ -1,19 +1,19 @@
 package openblocks.common.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import openblocks.Config;
 
 public class BlockDonationStation extends OpenBlock {
 
 	public BlockDonationStation() {
-		super(Config.blockDonationStationId, Material.rock);
+		super(Material.rock);
 		setRotationMode(BlockRotationMode.FOUR_DIRECTIONS);
 		setBlockBounds(0.2f, 0.25f, 0.2f, 0.8f, 0.85f, 0.8f);
 	}
 
 	@Override
-	public void registerIcons(IconRegister registry) {
+	public void registerBlockIcons(IIconRegister registry) {
 		blockIcon = registry.registerIcon("openblocks:donationstation");
 	}
 

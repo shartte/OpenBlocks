@@ -1,5 +1,9 @@
 package openblocks.common.entity;
 
+import com.google.common.base.Throwables;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.entity.EntityCreature;
@@ -12,12 +16,13 @@ import net.minecraft.world.World;
 import openblocks.common.entity.ai.EntityAIBreakBlock;
 import openblocks.common.entity.ai.EntityAIPickupPlayer;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 
 public class EntityMiniMe extends EntityCreature implements IEntityAdditionalSpawnData {
 
@@ -81,14 +86,14 @@ public class EntityMiniMe extends EntityCreature implements IEntityAdditionalSpa
 	@Override
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
-		getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(10.0D);
-		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.3D);
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(10.0D);
+		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.3D);
 	}
 
 	@SideOnly(Side.CLIENT)
 	public ResourceLocation getLocationSkin() {
 		String newSkin = getPlayerSkin();
-		if (newSkin != previousSkin) {
+		if (!newSkin.equals(previousSkin)) {
 			locationSkin = null;
 			downloadImageSkin = null;
 		}
@@ -124,13 +129,23 @@ public class EntityMiniMe extends EntityCreature implements IEntityAdditionalSpa
 	}
 
 	@Override
-	public void writeSpawnData(ByteArrayDataOutput data) {
-		data.writeUTF(owner);
-	}
+	public void writeSpawnData(ByteBuf buf) {
+    DataOutput data = new ByteBufOutputStream(buf);
+    try {
+      data.writeUTF(owner);
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
+    }
+  }
 
 	@Override
-	public void readSpawnData(ByteArrayDataInput data) {
-		owner = data.readUTF();
+	public void readSpawnData(ByteBuf buf) {
+    DataInput data = new ByteBufInputStream(buf);
+    try {
+      owner = data.readUTF();
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
+    }
 	}
 
 	@Override

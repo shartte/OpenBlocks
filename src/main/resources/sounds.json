@@ -1,0 +1,6 @@
+{
+    "openmods.pageturn": {
+        "category": "master",
+        "sounds": [{"name":"pageturn","stream":false}]
+    }
+}

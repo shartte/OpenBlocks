@@ -5,9 +5,9 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
@@ -69,7 +69,7 @@ public class TileEntityTankRenderer extends TileEntitySpecialRenderer {
 
 			final Fluid fluid = fluidStack.getFluid();
 
-			final Icon texture = fluid.getStillIcon();
+			final IIcon texture = fluid.getStillIcon();
 			final int color = fluid.getColor(fluidStack);
 
 			bindTexture(getFluidSheet(fluid));

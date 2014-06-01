@@ -3,9 +3,11 @@ package openblocks.common.tileentity;
 import java.util.Set;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.common.item.ItemPaintBrush;
 import openblocks.common.item.ItemPaintCan;
 import openmods.api.IActivateAwareTile;
@@ -49,9 +51,9 @@ public class TileEntityPaintCan extends SyncedTileEntity implements IPlaceAwareT
 		}
 
 		if (amount.getValue() <= 0 && !worldObj.isRemote) {
-			ItemStack item = new ItemStack(Item.bucketEmpty);
+			ItemStack item = new ItemStack(Items.bucket);
 			BlockUtils.dropItemStackInWorld(worldObj, xCoord, yCoord, zCoord, item);
-			worldObj.setBlock(xCoord, yCoord, zCoord, 0);
+			worldObj.setBlock(xCoord, yCoord, zCoord, Blocks.air);
 		}
 		return false;
 	}

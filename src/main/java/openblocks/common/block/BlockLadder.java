@@ -2,30 +2,28 @@ package openblocks.common.block;
 
 import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import openblocks.Config;
 import openblocks.OpenBlocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockLadder extends BlockTrapDoor {
 
-	public static boolean disableValidation = false;
-
 	public BlockLadder() {
-		super(Config.blockLadderId, Material.wood);
+		super(Material.wood);
 		setHardness(3.0F);
-		setStepSound(soundWoodFootstep);
+		setStepSound(Blocks.log.stepSound);
 		setCreativeTab(OpenBlocks.tabOpenBlocks);
 		setBlockBounds(0f, 0f, 0f, 1.5f, 1f, 1.5f);
 	}
 
 	@Override
-	public void registerIcons(IconRegister registry) {
+	public void registerBlockIcons(IIconRegister registry) {
 		blockIcon = registry.registerIcon("openblocks:ladder");
 	}
 
@@ -49,11 +47,13 @@ public class BlockLadder extends BlockTrapDoor {
 
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4) {
-		setBlockBoundsForBlockRender(par1IBlockAccess.getBlockMetadata(par2, par3, par4));
+    // TODO: Obfuscated method: was setBlockBoundsForBlockRender
+    func_150117_b(par1IBlockAccess.getBlockMetadata(par2, par3, par4));
 	}
 
+  // TODO: Obfuscated method: was setBlockBoundsForBlockRender
 	@Override
-	public void setBlockBoundsForBlockRender(int par1) {
+	public void func_150117_b(int par1) {
 
 		float f = 0.125F;
 
@@ -63,7 +63,8 @@ public class BlockLadder extends BlockTrapDoor {
 			setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, f, 1.0F);
 		}
 
-		if (isTrapdoorOpen(par1)) {
+    // TODO: Obfuscated method, was: isTrapdoorOpen
+		if (func_150118_d(par1)) {
 			if ((par1 & 3) == 0) {
 				setBlockBounds(0.0F, 0.0F, 1.0F - f, 1.0F, 1.0F, 1.0F);
 			}
@@ -83,7 +84,7 @@ public class BlockLadder extends BlockTrapDoor {
 	}
 
 	@Override
-	public boolean isLadder(World world, int x, int y, int z, EntityLivingBase entity) {
+	public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity) {
 		return true;
 	}
 

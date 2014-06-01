@@ -4,11 +4,12 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.*;
 import openblocks.Config;
 import openblocks.OpenBlocks;
@@ -144,12 +145,12 @@ public class TileEntityTank extends SyncedTileEntity implements IActivateAwareTi
 	@Override
 	public void onSynced(Set<ISyncableObject> changes) {
 		int newFluidId = tank.getFluid() == null? -1 : tank.getFluid().fluidID;
-		if (newFluidId != previousFluidId) worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
+		if (newFluidId != previousFluidId) worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		previousFluidId = newFluidId;
 	}
 
 	@Override
-	public void onNeighbourChanged(int blockId) {
+	public void onNeighbourChanged(Block block) {
 		forceUpdate = true;
 	}
 
@@ -276,7 +277,7 @@ public class TileEntityTank extends SyncedTileEntity implements IActivateAwareTi
 		if (needsUpdate && ticksSinceLastUpdate > UPDATE_THRESHOLD) {
 			needsUpdate = false;
 			ticksSinceLastUpdate = 0;
-			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType().blockID);
+			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
 		}
 	}
 
@@ -343,7 +344,7 @@ public class TileEntityTank extends SyncedTileEntity implements IActivateAwareTi
 	}
 
 	private void tryFillBottomTank(FluidStack fluid) {
-		TileEntity te = worldObj.getBlockTileEntity(xCoord, yCoord - 1, zCoord);
+		TileEntity te = worldObj.getTileEntity(xCoord, yCoord - 1, zCoord);
 		if (te instanceof TileEntityTank) {
 			int amount = ((TileEntityTank)te).internalFill(fluid, true);
 			if (amount > 0) internalDrain(amount, true);
@@ -360,7 +361,7 @@ public class TileEntityTank extends SyncedTileEntity implements IActivateAwareTi
 		if (!containsFluid(needed) || needed.amount <= 0) return;
 
 		if (yCoord < 255) {
-			TileEntity te = worldObj.getBlockTileEntity(xCoord, yCoord + 1, zCoord);
+			TileEntity te = worldObj.getTileEntity(xCoord, yCoord + 1, zCoord);
 			if (te instanceof TileEntityTank) ((TileEntityTank)te).drainFromColumn(needed, doDrain);
 		}
 
@@ -386,7 +387,7 @@ public class TileEntityTank extends SyncedTileEntity implements IActivateAwareTi
 		resource.amount -= amount;
 
 		if (resource.amount > 0 && yCoord < 255) {
-			TileEntity te = worldObj.getBlockTileEntity(xCoord, yCoord + 1, zCoord);
+			TileEntity te = worldObj.getTileEntity(xCoord, yCoord + 1, zCoord);
 			if (te instanceof TileEntityTank) ((TileEntityTank)te).fillColumn(resource, doFill);
 		}
 	}

@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -91,14 +92,14 @@ public class EntityMagnet extends EntitySmoothMove implements IEntityAdditionalS
 		}
 
 		@Override
-		public void writeSpawnData(ByteArrayDataOutput data) {
+		public void writeSpawnData(ByteBuf data) {
 			super.writeSpawnData(data);
 			Entity owner = this.owner.get();
-			data.writeInt(owner != null? owner.entityId : -1);
+			data.writeInt(owner != null? owner.getEntityId() : -1);
 		}
 
 		@Override
-		public void readSpawnData(ByteArrayDataInput data) {
+		public void readSpawnData(ByteBuf data) {
 			super.readSpawnData(data);
 			int entityId = data.readInt();
 			if (entityId >= 0) DelayedEntityLoadManager.instance.registerLoadListener(worldObj, this, entityId);
@@ -158,12 +159,12 @@ public class EntityMagnet extends EntitySmoothMove implements IEntityAdditionalS
 	protected void writeEntityToNBT(NBTTagCompound tag) {}
 
 	@Override
-	public void writeSpawnData(ByteArrayDataOutput data) {
+	public void writeSpawnData(ByteBuf data) {
 		data.writeBoolean(isMagic);
 	}
 
 	@Override
-	public void readSpawnData(ByteArrayDataInput data) {
+	public void readSpawnData(ByteBuf data) {
 		isMagic = data.readBoolean();
 	}
 
@@ -253,8 +254,13 @@ public class EntityMagnet extends EntitySmoothMove implements IEntityAdditionalS
 
 	@Override
 	public boolean isEntityApplicable(Entity entity) {
-		return (entity instanceof EntityLivingBase) || MagnetWhitelists.instance.entityWhitelist.check(entity);
-	}
+    if (entity instanceof EntityLivingBase)
+      return true;
+
+    World world = entity.worldObj;
+
+    return MagnetWhitelists.instance.entityWhitelist.check(world, entity.serverPosX, entity.serverPosY, entity.serverPosZ, entity);
+  }
 
 	@SuppressWarnings("unchecked")
 	protected List<Entity> detectEntityTargets() {

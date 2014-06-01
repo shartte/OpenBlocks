@@ -4,8 +4,9 @@ import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.common.ForgeDirection;
-import openblocks.Config;
+import net.minecraft.init.Blocks;
+import net.minecraftforge.common.util.ForgeDirection;
+import openblocks.OpenBlocks;
 import openblocks.client.gui.GuiDigitalFuse;
 import openblocks.common.container.ContainerDigitalFuse;
 import openmods.OpenMods;
@@ -42,7 +43,7 @@ public class TileEntityDigitalFuse extends SyncedTileEntity implements INeighbou
 	@Override
 	protected void initialize() {
 		if (worldObj.isRemote) return;
-		onNeighbourChanged(0);
+		onNeighbourChanged(Blocks.air);
 	}
 
 	@Override
@@ -96,7 +97,7 @@ public class TileEntityDigitalFuse extends SyncedTileEntity implements INeighbou
 				xCoord + rotate.offsetX,
 				yCoord + rotate.offsetY,
 				zCoord + rotate.offsetZ,
-				Config.blockDigitalFuseId);
+        OpenBlocks.Blocks.digitalFuse);
 	}
 
 	public SyncableInt getTimeLeft() {
@@ -123,7 +124,7 @@ public class TileEntityDigitalFuse extends SyncedTileEntity implements INeighbou
 	public void onSynced(Set<ISyncableObject> changes) {}
 
 	@Override
-	public void onNeighbourChanged(int blockId) {
+	public void onNeighbourChanged(Block block) {
 
 		if (!worldObj.isRemote) {
 
@@ -148,10 +149,9 @@ public class TileEntityDigitalFuse extends SyncedTileEntity implements INeighbou
 
 		if (worldObj.isAirBlock(pX, pY, pZ)) { return false; }
 
-		int blockId = worldObj.getBlockId(pX, pY, pZ);
-		Block block = Block.blocksList[blockId];
+		Block block = worldObj.getBlock(pX, pY, pZ);
 
-		if (block == Block.redstoneWire) {
+		if (block == Blocks.redstone_wire) {
 			return worldObj.getBlockMetadata(pX, pY, pZ) > 0;
 		} else if (block.hasComparatorInputOverride()) {
 			return block.getComparatorInputOverride(worldObj, pX, pY, pZ, side.getOpposite().ordinal()) > 0;

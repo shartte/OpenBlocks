@@ -1,42 +1,34 @@
 package openblocks.client;
 
-import java.util.EnumSet;
-
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 import openblocks.common.entity.EntityHangGlider;
-import cpw.mods.fml.common.ITickHandler;
-import cpw.mods.fml.common.TickType;
 
-public class ClientTickHandler implements ITickHandler {
+public class ClientTickHandler {
 
 	private static int ticks = 0;
 
-	@Override
-	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-		if (type.contains(TickType.RENDER)) {
-			if (Minecraft.getMinecraft().theWorld != null) {
-				preRenderTick(Minecraft.getMinecraft(), Minecraft.getMinecraft().theWorld, ((Float)tickData[0]).floatValue());
-			}
-		}
+  @SubscribeEvent
+  public void onTickEvent(TickEvent tickEvent) {
 
-		if (type.contains(TickType.CLIENT)) {
-			clientTick();
-		}
-	}
+    if (tickEvent.phase != TickEvent.Phase.START)
+      return;
 
-	@Override
-	public void tickEnd(EnumSet<TickType> type, Object... tickData) {}
+    switch (tickEvent.type) {
+      case CLIENT:
+        clientTick();
+        break;
+      case RENDER:
+        if (Minecraft.getMinecraft().theWorld != null) {
+          TickEvent.RenderTickEvent renderTickEvent = (TickEvent.RenderTickEvent) tickEvent;
+          preRenderTick(Minecraft.getMinecraft(), Minecraft.getMinecraft().theWorld, renderTickEvent.renderTickTime);
+        }
+        break;
+    }
 
-	@Override
-	public EnumSet<TickType> ticks() {
-		return EnumSet.of(TickType.RENDER, TickType.CLIENT);
-	}
-
-	@Override
-	public String getLabel() {
-		return "OpenBlocksClientTick";
-	}
+  }
 
 	public void preRenderTick(Minecraft mc, World world, float renderTick) {
 		EntityHangGlider.updateGliders(world);

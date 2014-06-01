@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -15,15 +16,15 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import net.minecraftforge.common.FakePlayer;
-import net.minecraftforge.event.EventPriority;
-import net.minecraftforge.event.ForgeSubscribe;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import openblocks.Config;
 import openmods.GenericInventory;
 import openmods.Log;
 
 import com.google.common.collect.Lists;
+import openmods.utils.PlayerUtils;
 
 public class PlayerInventoryStore {
 
@@ -58,7 +59,7 @@ public class PlayerInventoryStore {
 
 		Date now = new Date();
 
-		Matcher matcher = SAFE_CHARS.matcher(player.username);
+		Matcher matcher = SAFE_CHARS.matcher(PlayerUtils.getName(player));
 		String playerName = matcher.replaceAll("_");
 		File dumpFile = getNewDumpFile(now, playerName, player.worldObj);
 
@@ -68,7 +69,7 @@ public class PlayerInventoryStore {
 		NBTTagCompound root = new NBTTagCompound();
 		root.setTag(TAG_INVENTORY, invData);
 		root.setLong("Created", now.getTime());
-		root.setString("Player", player.username);
+		root.setString("Player", PlayerUtils.getName(player));
 
 		try {
 			OutputStream stream = new FileOutputStream(dumpFile);
@@ -78,7 +79,7 @@ public class PlayerInventoryStore {
 				stream.close();
 			}
 		} catch (IOException e) {
-			Log.warn("Failed to dump data for player %s, file %s", player.username, dumpFile.getAbsoluteFile());
+			Log.warn("Failed to dump data for player %s, file %s", PlayerUtils.getName(player), dumpFile.getAbsoluteFile());
 		}
 
 		return dumpFile;
@@ -146,16 +147,16 @@ public class PlayerInventoryStore {
 		return true;
 	}
 
-	@ForgeSubscribe(priority = EventPriority.HIGH)
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void onPlayerDeath(LivingDeathEvent event) {
 		if (Config.dumpStiffsStuff && (event.entity instanceof EntityPlayerMP) && !(event.entity instanceof FakePlayer)) {
 			EntityPlayer player = (EntityPlayer)event.entity;
 			try {
 
 				File file = storePlayerInventory(player);
-				Log.info("Storing post-mortem inventory of player %s into %s", player.username, file.getAbsolutePath());
+				Log.info("Storing post-mortem inventory of player %s into %s", PlayerUtils.getName(player), file.getAbsolutePath());
 			} catch (Exception e) {
-				Log.severe(e, "Failed to store inventory for player %s", player.username);
+				Log.severe(e, "Failed to store inventory for player %s", PlayerUtils.getName(player));
 			}
 		}
 	}

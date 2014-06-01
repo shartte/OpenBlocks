@@ -1,14 +1,14 @@
 package openblocks.common.item;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatMessageComponent;
-import net.minecraft.util.Icon;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import openblocks.Config;
 import openblocks.OpenBlocks;
 import openblocks.common.PedometerHandler;
 import openblocks.common.PedometerHandler.PedometerData;
@@ -21,23 +21,22 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ItemPedometer extends Item {
 
 	public ItemPedometer() {
-		super(Config.itemPedometer);
 		setMaxStackSize(1);
 		setCreativeTab(OpenBlocks.tabOpenBlocks);
 	}
 
-	private Icon pedometerMoving;
-	private Icon pedometerStill;
+	private IIcon pedometerMoving;
+	private IIcon pedometerStill;
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister registry) {
+	public void registerIcons(IIconRegister registry) {
 		pedometerMoving = registry.registerIcon("openblocks:pedometer_moving");
 		itemIcon = pedometerStill = registry.registerIcon("openblocks:pedometer_still");
 	}
 
 	private static void send(EntityPlayer player, String format, Object... args) {
-		player.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions(format, args));
+		player.addChatMessage(new ChatComponentTranslation(format, args));
 	}
 
 	private SpeedUnit speedUnit = SpeedUnit.M_PER_TICK;
@@ -48,14 +47,14 @@ public class ItemPedometer extends Item {
 		if (world.isRemote) {
 			if (player.isSneaking()) {
 				PedometerHandler.reset(player);
-				player.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("openblocks.misc.pedometer.tracking_reset"));
+				player.addChatMessage(new ChatComponentTranslation("openblocks.misc.pedometer.tracking_reset"));
 			} else {
 				PedometerState state = PedometerHandler.getProperty(player);
 				if (state.isRunning()) {
 					showPedometerData(player, state);
 				} else {
 					state.init(player, world);
-					player.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("openblocks.misc.pedometer.tracking_started"));
+					player.addChatMessage(new ChatComponentTranslation("openblocks.misc.pedometer.tracking_started"));
 				}
 			}
 		}
@@ -64,7 +63,7 @@ public class ItemPedometer extends Item {
 
 	protected void showPedometerData(EntityPlayer player, PedometerState state) {
 		PedometerData result = state.getData();
-		player.sendChatToPlayer(ChatMessageComponent.createFromText(""));
+		player.addChatMessage(new ChatComponentText(""));
 		send(player, "openblocks.misc.pedometer.start_point", String.format("%.1f %.1f %.1f", result.startingPoint.xCoord, result.startingPoint.yCoord, result.startingPoint.zCoord));
 
 		send(player, "openblocks.misc.pedometer.speed", speedUnit.format(result.currentSpeed));
@@ -87,7 +86,7 @@ public class ItemPedometer extends Item {
 	}
 
 	@Override
-	public Icon getIcon(ItemStack stack, int renderPass, EntityPlayer player, ItemStack usingItem, int useRemaining) {
+	public IIcon getIcon(ItemStack stack, int renderPass, EntityPlayer player, ItemStack usingItem, int useRemaining) {
 		if (player.motionX * player.motionX + player.motionY * player.motionY + player.motionZ * player.motionZ > 0.01) return pedometerMoving;
 		return pedometerStill;
 	}

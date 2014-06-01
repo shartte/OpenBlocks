@@ -1,5 +1,6 @@
 package openblocks.common;
 
+import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
@@ -8,7 +9,6 @@ import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.tileentity.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.Event;
 import openmods.utils.*;
 import openmods.utils.ObjectTester.ClassNameTester;
 import openmods.utils.ObjectTester.ClassTester;
@@ -71,14 +71,14 @@ public class MagnetWhitelists {
 
 		blockWhitelist.addTester(new ITester<Block>() {
 			@Override
-			public Result test(Block o) {
-				return (o.blockHardness < 0)? Result.REJECT : Result.CONTINUE;
+			public Result test(World world, int x, int y, int z, Block o) {
+				return (o.getBlockHardness(world, x, y, z) < 0)? Result.REJECT : Result.CONTINUE;
 			}
 		});
 
 		blockWhitelist.addTester(new ITester<Block>() {
 			@Override
-			public openmods.utils.ITester.Result test(Block o) {
+			public openmods.utils.ITester.Result test(World world, int x, int y, int z, Block o) {
 				return o.getRenderType() == 0? Result.ACCEPT : Result.CONTINUE;
 			}
 		});
@@ -90,24 +90,19 @@ public class MagnetWhitelists {
 		blockWhitelist.addTester(new ClassTester<Block>(BlockCactus.class));
 		MinecraftForge.EVENT_BUS.post(new BlockRegisterEvent(blockWhitelist));
 
-		tileEntityWhitelist.addTester(new ClassTester<TileEntity>(TileEntityBeacon.class)).addTester(new ClassTester<TileEntity>(TileEntityBrewingStand.class)).addTester(new ClassTester<TileEntity>(TileEntityChest.class)).addTester(new ClassTester<TileEntity>(TileEntityCommandBlock.class)).addTester(new ClassTester<TileEntity>(TileEntityDispenser.class)).addTester(new ClassTester<TileEntity>(TileEntityEnchantmentTable.class)).addTester(new ClassTester<TileEntity>(TileEntityEnderChest.class)).addTester(new ClassTester<TileEntity>(TileEntityFurnace.class)).addTester(new ClassTester<TileEntity>(TileEntityHopper.class)).addTester(new ClassTester<TileEntity>(TileEntityNote.class)).addTester(new ClassTester<TileEntity>(TileEntityRecordPlayer.class));
+		tileEntityWhitelist.addTester(new ClassTester<TileEntity>(TileEntityBeacon.class)).addTester(new ClassTester<TileEntity>(TileEntityBrewingStand.class)).addTester(new ClassTester<TileEntity>(TileEntityChest.class)).addTester(new ClassTester<TileEntity>(TileEntityCommandBlock.class)).addTester(new ClassTester<TileEntity>(TileEntityDispenser.class)).addTester(new ClassTester<TileEntity>(TileEntityEnchantmentTable.class)).addTester(new ClassTester<TileEntity>(TileEntityEnderChest.class)).addTester(new ClassTester<TileEntity>(TileEntityFurnace.class)).addTester(new ClassTester<TileEntity>(TileEntityHopper.class)).addTester(new ClassTester<TileEntity>(TileEntityNote.class)).addTester(new ClassTester<TileEntity>(BlockJukebox.TileEntityJukebox.class));
 	}
 
 	public boolean testBlock(World world, int x, int y, int z) {
-		int blockId = world.getBlockId(x, y, z);
-		Block /* block? */block /* block! */= Block/* blocky */.blocksList[blockId/*
-																				 * blockety
-																				 * block
-																				 */];
-		// semantic satiation FTW!
+		Block block = world.getBlock(x, y, z);
 
 		if (block == null) return false;
 
 		if (block instanceof BlockContainer) {
-			TileEntity te = world.getBlockTileEntity(x, y, z);
-			return (te != null)? tileEntityWhitelist.check(te) : false;
+			TileEntity te = world.getTileEntity(x, y, z);
+			return (te != null) && tileEntityWhitelist.check(world, x, y, z, te);
 		}
 
-		return blockWhitelist.check(block);
+		return blockWhitelist.check(world, x, y, z, block);
 	}
 }

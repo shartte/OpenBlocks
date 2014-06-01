@@ -5,15 +5,16 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.Config;
 import openblocks.OpenBlocks;
 import openblocks.common.block.BlockCanvas;
@@ -33,24 +34,24 @@ public class ItemWallpaper extends Item {
 		public static final String TAG_BLOCK_META = "blockMeta";
 		public static final String TAG_BLOCK_SIDE = "blockSide";
 
-		private int blockId;
+		private Block block;
 		private int blockMeta;
 		private int blockSide;
 
-		public BlockSideTexture(int id, int meta, int side) {
-			blockId = id;
+		public BlockSideTexture(Block block, int meta, int side) {
+			block = block;
 			blockMeta = meta;
 			blockSide = side;
 		}
 
-		public Icon getIcon() {
+		public IIcon getIcon() {
 			Block block = getBlock();
 			if (block != null) { return block.getIcon(blockSide, blockMeta); }
 			return null;
 		}
 
 		public Block getBlock() {
-			return Block.blocksList[blockId];
+			return block;
 		}
 
 		public static BlockSideTexture fromItemStack(ItemStack stack) {
@@ -64,7 +65,7 @@ public class ItemWallpaper extends Item {
 						tag.hasKey(TAG_BLOCK_SIDE)) {
 
 				return new BlockSideTexture(
-						tag.getInteger(TAG_BLOCK_ID),
+            (Block) Block.blockRegistry.getObject(tag.getString(TAG_BLOCK_ID)),
 						tag.getInteger(TAG_BLOCK_META),
 						tag.getInteger(TAG_BLOCK_SIDE)); }
 			}
@@ -73,13 +74,9 @@ public class ItemWallpaper extends Item {
 
 		public void writeToStack(ItemStack stack) {
 			NBTTagCompound tag = ItemUtils.getItemTag(stack);
-			tag.setInteger(TAG_BLOCK_ID, blockId);
+			tag.setString(TAG_BLOCK_ID, Block.blockRegistry.getNameForObject(block));
 			tag.setInteger(TAG_BLOCK_META, blockMeta);
 			tag.setInteger(TAG_BLOCK_SIDE, blockSide);
-		}
-
-		public int getBlockId() {
-			return blockId;
 		}
 
 		public int getBlockMeta() {
@@ -102,7 +99,7 @@ public class ItemWallpaper extends Item {
 	}
 
 	public ItemWallpaper() {
-		super(Config.itemWallpaperId);
+
 		setHasSubtypes(true);
 		setCreativeTab(OpenBlocks.tabOpenBlocks);
 	}
@@ -114,12 +111,12 @@ public class ItemWallpaper extends Item {
 	}
 
 	@Override
-	public Icon getIcon(ItemStack stack, int pass) {
+	public IIcon getIcon(ItemStack stack, int pass) {
 		return getIconIndex(stack);
 	}
 
 	@Override
-	public Icon getIconIndex(ItemStack stack) {
+	public IIcon getIconIndex(ItemStack stack) {
 		BlockSideTexture texture = BlockSideTexture.fromItemStack(stack);
 		if (texture != null) { return texture.getIcon(); }
 		return OpenBlocks.Blocks.canvas.wallpaper;
@@ -140,7 +137,7 @@ public class ItemWallpaper extends Item {
 
 		int hitSide = side;
 
-		TileEntity te = world.getBlockTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(x, y, z);
 
 		boolean canReplaceBlock = PaintUtils.instance.isAllowedToReplace(world, x, y, z);
 
@@ -154,7 +151,7 @@ public class ItemWallpaper extends Item {
 					BlockCanvas.replaceBlock(world, x, y, z);
 				}
 
-				te = world.getBlockTileEntity(x, y, z);
+				te = world.getTileEntity(x, y, z);
 
 				if (te instanceof TileEntityCanvas) {
 
@@ -163,7 +160,7 @@ public class ItemWallpaper extends Item {
 
 			} else if (!world.isRemote) {
 
-				int blockId = world.getBlockId(x, y, z);
+				Block block = world.getBlock(x, y, z);
 				int meta = world.getBlockMetadata(x, y, z);
 
 				if (te instanceof TileEntityCanvas) {
@@ -176,14 +173,14 @@ public class ItemWallpaper extends Item {
 					// meta = layer.getBaseTextureMetadata();
 					// side = layer.getBaseTextureSide();
 
-					if (blockId == 0) {
-						blockId = canvas.paintedBlockId.getValue();
+					if (block == Blocks.air) {
+						block = (Block) Block.blockRegistry.getObject(canvas.paintedBlockId.getValue());
 						meta = canvas.paintedBlockMeta.getValue();
 						side = hitSide;
 					}
 				}
 
-				texture = new BlockSideTexture(blockId, meta, side);
+				texture = new BlockSideTexture(block, meta, side);
 
 				ItemStack cloneStack = stack.copy();
 				cloneStack.stackSize = 1;

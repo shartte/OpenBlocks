@@ -1,8 +1,15 @@
 package openblocks.common.entity;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
+import com.google.common.base.Throwables;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,15 +19,12 @@ import net.minecraft.world.World;
 import openblocks.OpenBlocks;
 import openblocks.common.item.ItemHangGlider;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import openmods.utils.PlayerUtils;
 
-public class EntityHangGlider extends Entity implements
-		IEntityAdditionalSpawnData {
+public class EntityHangGlider extends Entity implements IEntityAdditionalSpawnData {
 
 	private static Map<EntityPlayer, Integer> gliderMap = new WeakHashMap<EntityPlayer, Integer>();
 	private static Map<EntityPlayer, Integer> gliderClientMap = new WeakHashMap<EntityPlayer, Integer>();
@@ -81,7 +85,7 @@ public class EntityHangGlider extends Entity implements
 	public EntityHangGlider(World world, EntityPlayer player) {
 		this(world);
 		this.player = player;
-		gliderMap.put(player, entityId);
+		gliderMap.put(player, getEntityId());
 	}
 
 	@Override
@@ -182,22 +186,37 @@ public class EntityHangGlider extends Entity implements
 	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
 
 	@Override
-	public void writeSpawnData(ByteArrayDataOutput data) {
-		if (player != null) {
-			data.writeUTF(player.username);
-		} else {
-			data.writeUTF("[none]");
-		}
-	}
+	public void writeSpawnData(ByteBuf buf) {
+
+    DataOutput data = new ByteBufOutputStream(buf);
+
+    try {
+      if (player != null) {
+        data.writeUTF(PlayerUtils.getName(player));
+      } else {
+        data.writeUTF("[none]");
+      }
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
+    }
+  }
 
 	@Override
-	public void readSpawnData(ByteArrayDataInput data) {
-		String username = data.readUTF();
-		if ("[none]".equals(username)) {
+	public void readSpawnData(ByteBuf buf) {
+
+    DataInput data = new ByteBufInputStream(buf);
+
+    String username = null;
+    try {
+      username = data.readUTF();
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
+    }
+    if ("[none]".equals(username)) {
 			setDead();
 		} else {
 			player = worldObj.getPlayerEntityByName(username);
-			gliderClientMap.put(player, entityId);
+			gliderClientMap.put(player, getEntityId());
 		}
 	}
 

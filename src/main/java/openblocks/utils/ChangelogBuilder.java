@@ -2,6 +2,7 @@ package openblocks.utils;
 
 import java.io.*;
 
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,26 +22,25 @@ public class ChangelogBuilder {
 
 		if (input != null) {
 
-			ItemStack book = new ItemStack(Item.writtenBook);
+			ItemStack book = new ItemStack(Items.written_book);
 
 			NBTTagCompound bookTag = ItemUtils.getItemTag(book);
 
 			bookTag.setString("title", StatCollector.translateToLocalFormatted("openblocks.changelog.title", version));
 			bookTag.setString("author", "The OpenMods team");
 
-			NBTTagList bookPages = new NBTTagList("pages");
+			NBTTagList bookPages = new NBTTagList();
 			bookTag.setTag("pages", bookPages);
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(input));
 			try {
 
-				int pageNumber = 1;
 				StringBuilder pageInfo = new StringBuilder();
-				String line = null;
+				String line;
 
 				while ((line = in.readLine()) != null) {
 					if (line.equals("EOP")) {
-						bookPages.appendTag(new NBTTagString(Integer.toString(pageNumber++), pageInfo.toString()));
+						bookPages.appendTag(new NBTTagString(pageInfo.toString()));
 						pageInfo = new StringBuilder();
 					} else {
 						pageInfo.append(line);

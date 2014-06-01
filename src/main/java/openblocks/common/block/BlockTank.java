@@ -10,7 +10,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidTank;
 import openblocks.Config;
 import openblocks.OpenBlocks;
@@ -20,16 +20,16 @@ import openmods.utils.ItemUtils;
 public class BlockTank extends OpenBlock {
 
 	public BlockTank() {
-		super(Config.blockTankId, Material.rock);
+		super(Material.rock);
 	}
 
 	@Override
-	public boolean canBeReplacedByLeaves(World world, int x, int y, int z) {
+	public boolean canBeReplacedByLeaves(IBlockAccess world, int x, int y, int z) {
 		return false;
 	}
 
 	@Override
-	public boolean isFlammable(IBlockAccess world, int x, int y, int z, int metadata, ForgeDirection face) {
+	public boolean isFlammable(IBlockAccess world, int x, int y, int z, ForgeDirection face) {
 		return false;
 	}
 
@@ -44,7 +44,7 @@ public class BlockTank extends OpenBlock {
 	}
 
 	@Override
-	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) {
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 		return true;
 	}
 
@@ -57,7 +57,7 @@ public class BlockTank extends OpenBlock {
 			NBTTagCompound tankTag = tank.getItemNBT();
 
 			NBTTagCompound itemTag = ItemUtils.getItemTag(stack);
-			itemTag.setCompoundTag("tank", tankTag);
+			itemTag.setTag("tank", tankTag);
 		}
 		result.add(stack);
 	}
@@ -85,7 +85,7 @@ public class BlockTank extends OpenBlock {
 				if (tankTag.hasKey("Amount")) tankTag.setInteger("Amount", tank.getCapacity());
 
 				NBTTagCompound nbt = ItemUtils.getItemTag(result);
-				nbt.setCompoundTag("tank", tankTag);
+				nbt.setTag("tank", tankTag);
 			}
 		}
 		return result;

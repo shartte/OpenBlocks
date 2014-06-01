@@ -2,12 +2,12 @@ package openblocks.common.item;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import openblocks.Config;
 import openblocks.OpenBlocks;
@@ -29,7 +29,7 @@ public class ItemCartographer extends Item {
 
 		public final String untranslatedName;
 		public final String iconName;
-		private Icon icon;
+		private IIcon icon;
 
 		private AssistantType(String name, String iconName) {
 			this.untranslatedName = "openblocks.assistant_" + name;
@@ -42,7 +42,7 @@ public class ItemCartographer extends Item {
 	}
 
 	public ItemCartographer() {
-		super(Config.itemCartographerId);
+
 		setMaxDamage(0);
 		setHasSubtypes(true);
 		setCreativeTab(OpenBlocks.tabOpenBlocks);
@@ -51,13 +51,13 @@ public class ItemCartographer extends Item {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIconIndex(ItemStack stack) {
+	public IIcon getIconIndex(ItemStack stack) {
 		return getTypeFromItem(stack).icon;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister register) {
+	public void registerIcons(IIconRegister register) {
 		for (AssistantType type : AssistantType.VALUES)
 			type.icon = register.registerIcon(type.iconName);
 	}
@@ -65,7 +65,7 @@ public class ItemCartographer extends Item {
 	@Override
 	@SideOnly(Side.CLIENT)
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void getSubItems(int id, CreativeTabs tab, List result) {
+	public void getSubItems(Item id, CreativeTabs tab, List result) {
 		for (AssistantType type : AssistantType.VALUES)
 			result.add(new ItemStack(id, 1, type.ordinal()));
 	}

@@ -9,11 +9,12 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import net.minecraftforge.event.ForgeSubscribe;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import openblocks.Config;
 import openblocks.OpenBlocks;
@@ -52,11 +53,11 @@ public class TrophyHandler {
 
 	public enum Trophy {
 		Wolf(),
-		Chicken(new ItemDropBehavior(10000, new ItemStack(Item.egg), "mob.chicken.plop")),
-		Cow(new ItemDropBehavior(20000, new ItemStack(Item.leather))),
+		Chicken(new ItemDropBehavior(10000, new ItemStack(Items.egg), "mob.chicken.plop")),
+		Cow(new ItemDropBehavior(20000, new ItemStack(Items.leather))),
 		Creeper(new CreeperBehavior()),
 		Skeleton(new SkeletonBehavior()),
-		PigZombie(new ItemDropBehavior(20000, new ItemStack(Item.goldNugget))),
+		PigZombie(new ItemDropBehavior(20000, new ItemStack(Items.gold_nugget))),
 		Bat(1.0, -0.3),
 		Zombie(),
 		Witch(0.35, new WitchBehavior()),
@@ -97,7 +98,7 @@ public class TrophyHandler {
 		MushroomCow(new MooshroomBehavior()),
 		VillagerGolem(0.3),
 		SnowMan(new SnowmanBehavior()),
-		Pig(new ItemDropBehavior(20000, new ItemStack(Item.porkRaw)));
+		Pig(new ItemDropBehavior(20000, new ItemStack(Items.porkchop)));
 
 		private double scale = 0.4;
 		private double verticalOffset = 0.0;
@@ -187,7 +188,7 @@ public class TrophyHandler {
 		public final static Trophy[] VALUES = values();
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onLivingDrops(LivingDropsEvent event) {
 		if (event.recentlyHit && DROP_RAND.nextDouble() < Config.trophyDropChance * event.lootingLevel) {
 			final Entity entity = event.entity;

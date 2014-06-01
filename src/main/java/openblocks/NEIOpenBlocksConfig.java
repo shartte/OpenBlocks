@@ -12,11 +12,12 @@ public class NEIOpenBlocksConfig implements IConfigureNEI {
 	public void loadConfig() {
 		try {
 			// I have no idea how to link with NEI API
-			Class<?> cls = Class.forName("codechicken.nei.api.API");
-			Method hide = cls.getMethod("hideItem", int.class);
-
-			if (Config.itemHeightMap > 0) hide.invoke(null, Config.itemHeightMap + 256);
-			if (Config.itemTunedCrystalId > 0) hide.invoke(null, Config.itemTunedCrystalId + 256);
+      // TODO: Depends on updating NEI config
+//			Class<?> cls = Class.forName("codechicken.nei.api.API");
+//			Method hide = cls.getMethod("hideItem", int.class);
+//
+//			if (Config.itemHeightMapEnabled) hide.invoke(null, Config.itemHeightMap + 256);
+//			if (Config.itemTunedCrystalEnabled) hide.invoke(null, Config.itemTunedCrystalId + 256);
 		} catch (Throwable t) {
 			Throwables.propagate(t);
 		}

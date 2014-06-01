@@ -28,7 +28,8 @@ public class ItemDropFlimFlam implements IFlimFlamAction {
 		ItemStack stack = inv.getStackInSlot(slot);
 		if (stack == null || random.nextFloat() > 0.5f) return false;
 
-		target.dropPlayerItem(inv.decrStackSize(slot, 1));
+    // TODO: No idea why, but second param is ignored...
+		target.dropPlayerItemWithRandomChoice(inv.decrStackSize(slot, 1), false);
 		return true;
 	}
 

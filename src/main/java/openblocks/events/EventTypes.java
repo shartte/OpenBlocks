@@ -82,11 +82,6 @@ public enum EventTypes implements IEventPacketType {
 	}
 
 	@Override
-	public boolean isChunked() {
-		return false;
-	}
-
-	@Override
 	public int getId() {
 		return EventIdRanges.OPEN_BLOCKS_ID_START + ordinal();
 	}

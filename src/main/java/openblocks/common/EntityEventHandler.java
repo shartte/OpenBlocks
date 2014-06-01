@@ -7,7 +7,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.event.ForgeSubscribe;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import openblocks.Config;
 import openblocks.OpenBlocks;
@@ -51,12 +51,12 @@ public class EntityEventHandler {
 		return entityBlacklist;
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onReconfigure(ConfigurationChange.Post evt) {
 		if (evt.check("additional", "disableMobNames")) entityBlacklist = null;
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onEntityJoinWorld(EntityJoinWorldEvent event) {
 
 		final Entity entity = event.entity;

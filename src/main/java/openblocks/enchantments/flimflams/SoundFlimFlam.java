@@ -3,7 +3,6 @@ package openblocks.enchantments.flimflams;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.packet.Packet62LevelSound;
 import openblocks.api.IFlimFlamAction;
 import openmods.utils.CollectionUtils;
 
@@ -29,7 +28,7 @@ public class SoundFlimFlam implements IFlimFlamAction {
 	@Override
 	public boolean execute(EntityPlayerMP target) {
 		String sound = CollectionUtils.getRandom(sounds);
-		target.playerNetServerHandler.sendPacketToPlayer(new Packet62LevelSound(sound, target.posX, target.posY, target.posZ, 1, 1));
+    target.playSound(sound, 1, 1); // TODO: move random list to sounds.json and reference that from here
 		return true;
 	}
 

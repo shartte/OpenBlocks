@@ -2,16 +2,20 @@ package openblocks.common.item;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
-import net.minecraft.util.ChatMessageComponent;
-import net.minecraft.util.Icon;
+
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.IChatComponent;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.Config;
 import openblocks.common.tileentity.*;
 import openblocks.common.tileentity.TileEntityImaginary.ICollisionData;
@@ -94,7 +98,7 @@ public class ItemImaginary extends ItemOpenBlock {
 		public final String name;
 		public final String overlayName;
 		public final boolean isInverted;
-		public Icon overlay;
+		public IIcon overlay;
 
 		private PlacementMode(float cost, String name, String overlayName, boolean isInverted) {
 			this.cost = cost;
@@ -111,8 +115,9 @@ public class ItemImaginary extends ItemOpenBlock {
 	public static float getUses(NBTTagCompound tag) {
 		NBTBase value = tag.getTag(TAG_USES);
 		if (value == null) return 0;
-		if (value instanceof NBTTagInt) return ((NBTTagInt)value).data;
-		if (value instanceof NBTTagFloat) return ((NBTTagFloat)value).data;
+    // TODO: Obfuscated accessor method to "data" which is now private
+		if (value instanceof NBTTagInt) return ((NBTTagInt)value).func_150287_d();
+		if (value instanceof NBTTagFloat) return ((NBTTagFloat)value).func_150288_h();
 
 		throw new IllegalStateException("Invalid tag type: " + value);
 	}
@@ -136,8 +141,8 @@ public class ItemImaginary extends ItemOpenBlock {
 		return stack.getItemDamage() == DAMAGE_CRAYON;
 	}
 
-	public ItemImaginary(int id) {
-		super(id);
+	public ItemImaginary(Block block) {
+    super(block);
 		setMaxStackSize(1);
 		setHasSubtypes(true);
 		setMaxDamage(0);
@@ -166,7 +171,9 @@ public class ItemImaginary extends ItemOpenBlock {
 		NBTTagInt color = (NBTTagInt)tag.getTag(TAG_COLOR);
 		PlacementMode mode = getMode(tag);
 		ICollisionData collisions = mode.createCollisionData(stack, player);
-		world.setBlockTileEntity(x, y, z, new TileEntityImaginary(color == null? null : color.data, mode.isInverted, collisions));
+    // TODO: Obfuscated accessor method to "data"
+    Integer colorData = color == null ? null : color.func_150287_d();
+		world.setTileEntity(x, y, z, new TileEntityImaginary(colorData, mode.isInverted, collisions));
 
 		if (!player.capabilities.isCreativeMode) {
 			float uses = Math.max(getUses(tag) - mode.cost, 0);
@@ -212,7 +219,8 @@ public class ItemImaginary extends ItemOpenBlock {
 		result.add(StatCollector.translateToLocalFormatted("openblocks.misc.uses", getUses(tag)));
 
 		NBTTagInt color = (NBTTagInt)tag.getTag(TAG_COLOR);
-		if (color != null) result.add(StatCollector.translateToLocalFormatted("openblocks.misc.color", color.data));
+    // TODO: Obfuscated accessor method to "data"
+		if (color != null) result.add(StatCollector.translateToLocalFormatted("openblocks.misc.color", color.func_150287_d()));
 
 		PlacementMode mode = getMode(tag);
 		String translatedMode = StatCollector.translateToLocal(mode.name);
@@ -221,7 +229,7 @@ public class ItemImaginary extends ItemOpenBlock {
 
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void getSubItems(int id, CreativeTabs tab, List result) {
+	public void getSubItems(Item item, CreativeTabs tab, List result) {
 		result.add(setupValues(null, new ItemStack(this, 1, DAMAGE_PENCIL)));
 		for (ColorMeta color : ColorUtils.getAllColors())
 			result.add(setupValues(color.rgb, new ItemStack(this, 1, DAMAGE_CRAYON)));
@@ -232,13 +240,13 @@ public class ItemImaginary extends ItemOpenBlock {
 		return 1; // render as item
 	}
 
-	private Icon iconCrayonBackground;
-	private Icon iconCrayonColor;
-	private Icon iconPencil;
+	private IIcon iconCrayonBackground;
+	private IIcon iconCrayonColor;
+	private IIcon iconPencil;
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister registry) {
+	public void registerIcons(IIconRegister registry) {
 		iconCrayonBackground = registry.registerIcon("openblocks:crayon_1");
 		iconCrayonColor = registry.registerIcon("openblocks:crayon_2");
 		iconPencil = registry.registerIcon("openblocks:pencil");
@@ -249,7 +257,7 @@ public class ItemImaginary extends ItemOpenBlock {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public final Icon getIcon(ItemStack stack, int pass) {
+	public final IIcon getIcon(ItemStack stack, int pass) {
 		if (!isCrayon(stack)) return pass == 1? getMode(stack).overlay : iconPencil;
 
 		switch (pass) {
@@ -293,8 +301,13 @@ public class ItemImaginary extends ItemOpenBlock {
 		return true;
 	}
 
-	@Override
-	public ItemStack getContainerItemStack(ItemStack stack) {
+  @Override
+  public boolean hasContainerItem(ItemStack stack) {
+    return true;
+  }
+
+  @Override
+	public ItemStack getContainerItem(ItemStack stack) {
 		ItemStack copy = stack.copy();
 
 		NBTTagCompound tag = ItemUtils.getItemTag(copy);
@@ -316,8 +329,8 @@ public class ItemImaginary extends ItemOpenBlock {
 
 			if (world.isRemote) {
 				PlacementMode mode = PlacementMode.VALUES[modeId];
-				ChatMessageComponent modeName = ChatMessageComponent.createFromTranslationKey(mode.name);
-				player.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("openblocks.misc.mode", modeName));
+				IChatComponent modeName = new ChatComponentTranslation(mode.name);
+				player.addChatMessage(new ChatComponentTranslation("openblocks.misc.mode", modeName));
 			}
 		}
 

@@ -4,13 +4,13 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.Config;
 
 public class BlockPath extends OpenBlock {
 
 	public BlockPath() {
-		super(Config.blockPathId, Material.plants);
+		super(Material.plants);
 		setBlockBounds(0, 0, 0, 1f, 0.1f, 1f);
 	}
 
@@ -36,14 +36,13 @@ public class BlockPath extends OpenBlock {
 	}
 
 	protected boolean isValidLocation(World world, int x, int y, int z) {
-		int bId = world.getBlockId(x, y - 1, z);
-		Block below = Block.blocksList[bId];
-		if (below != null) { return below.isBlockSolidOnSide(world, x, y - 1, z, ForgeDirection.UP); }
+		Block below = world.getBlock(x, y - 1, z);
+		if (below != null) { return below.isSideSolid(world, x, y - 1, z, ForgeDirection.UP); }
 		return false;
 	}
 
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, int par5) {
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
 		if (!world.isRemote && !isValidLocation(world, x, y, z)) {
 			dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
 			world.setBlockToAir(x, y, z);

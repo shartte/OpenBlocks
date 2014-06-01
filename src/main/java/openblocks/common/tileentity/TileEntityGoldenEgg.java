@@ -6,7 +6,7 @@ import java.util.Set;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.common.MagnetWhitelists;
 import openblocks.common.entity.EntityMiniMe;
 import openmods.OpenMods;
@@ -17,6 +17,7 @@ import openmods.sync.SyncableInt;
 import openmods.tileentity.SyncedTileEntity;
 
 import com.google.common.base.Strings;
+import openmods.utils.PlayerUtils;
 
 public class TileEntityGoldenEgg extends SyncedTileEntity implements IPlaceAwareTile {
 
@@ -128,7 +129,7 @@ public class TileEntityGoldenEgg extends SyncedTileEntity implements IPlaceAware
 
 	@Override
 	public void onBlockPlacedBy(EntityPlayer player, ForgeDirection side, ItemStack stack, float hitX, float hitY, float hitZ) {
-		if (player != null) owner = player.username;
+		if (player != null) owner = PlayerUtils.getName(player);
 	}
 
 }

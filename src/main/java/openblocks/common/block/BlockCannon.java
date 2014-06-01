@@ -3,13 +3,13 @@ package openblocks.common.block;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.Config;
 
 public class BlockCannon extends OpenBlock {
 
 	public BlockCannon() {
-		super(Config.blockCannonId, Material.rock);
+		super(Material.rock);
 		setBlockBounds(0.3f, 0, 0.3f, 0.6f, 0.7f, 0.7f);
 		/* I don't think this should rotate */
 	}

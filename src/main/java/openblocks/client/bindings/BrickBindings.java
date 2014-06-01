@@ -13,7 +13,7 @@ public class BrickBindings extends ActionBind {
 
 	@Override
 	public KeyBinding createBinding() {
-		return new KeyBinding("openblocks.keybind.drop_brick", Keyboard.KEY_B);
+		return new KeyBinding("openblocks.keybind.drop_brick", Keyboard.KEY_B, "openblocks.keybind");
 	}
 
 	@Override

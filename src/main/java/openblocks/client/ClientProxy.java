@@ -1,17 +1,19 @@
 package openblocks.client;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.Icon;
+import net.minecraft.item.Item;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
 import openblocks.Config;
 import openblocks.IOpenBlocksProxy;
@@ -19,7 +21,6 @@ import openblocks.OpenBlocks;
 import openblocks.client.bindings.BrickBindings;
 import openblocks.client.fx.FXLiquidSpray;
 import openblocks.client.model.ModelCraneBackpack;
-import openblocks.client.radio.RadioManager;
 import openblocks.client.renderer.BlockRenderingHandler;
 import openblocks.client.renderer.entity.*;
 import openblocks.client.renderer.item.*;
@@ -30,25 +31,20 @@ import openmods.binding.KeyDispatcherBuilder;
 import openmods.entity.EntityBlock;
 import openmods.entity.renderer.EntityBlockRenderer;
 import cpw.mods.fml.client.registry.*;
-import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
-import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.common.registry.VillagerRegistry;
-import cpw.mods.fml.relauncher.Side;
 
 public class ClientProxy implements IOpenBlocksProxy {
-
-	public ClientProxy() {}
 
 	private static final ResourceLocation RADIO_VILLAGER_TEXTURE = new ResourceLocation("openblocks", "textures/models/king-ish.png");
 
 	public static class Icons {
-		public static Icon xpJuiceStill;
-		public static Icon xpJuiceFlowing;
+		public static IIcon xpJuiceStill;
+		public static IIcon xpJuiceFlowing;
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void textureHook(TextureStitchEvent.Pre event) {
-		if (event.map.textureType == 0) {
+		if (event.map.getTextureType() == 0) {
 			Icons.xpJuiceFlowing = event.map.registerIcon("openblocks:xpjuiceflowing");
 			Icons.xpJuiceStill = event.map.registerIcon("openblocks:xpjuicestill");
 			if (OpenBlocks.Fluids.openBlocksXPJuice != null) {
@@ -60,8 +56,9 @@ public class ClientProxy implements IOpenBlocksProxy {
 	@Override
 	public void preInit() {
 		if (!Config.soSerious) {
-			KeyHandler handler = new KeyDispatcherBuilder().addBinding(new BrickBindings()).build();
-			KeyBindingRegistry.registerKeyBinding(handler);
+			new KeyDispatcherBuilder()
+          .addBinding(new BrickBindings())
+          .register();
 		}
 
 		if (Config.radioVillagerId > 0) {
@@ -71,8 +68,7 @@ public class ClientProxy implements IOpenBlocksProxy {
 
 	@Override
 	public void init() {
-		TickRegistry.registerTickHandler(new ClientTickHandler(), Side.CLIENT);
-		MinecraftForge.EVENT_BUS.register(new SoundLoader());
+		FMLCommonHandler.instance().bus().register(new ClientTickHandler());
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -111,22 +107,22 @@ public class ClientProxy implements IOpenBlocksProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGoldenEgg.class, new TileEntityGoldenEggRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDigitalFuse.class, new TileEntityDigitalFuseRenderer());
 
-		if (OpenBlocks.Blocks.tank != null) MinecraftForgeClient.registerItemRenderer(OpenBlocks.Blocks.tank.blockID, new ItemRendererTank());
+		if (OpenBlocks.Blocks.tank != null) MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(OpenBlocks.Blocks.tank), new ItemRendererTank());
 
 		if (OpenBlocks.Items.luggage != null) {
-			MinecraftForgeClient.registerItemRenderer(OpenBlocks.Items.luggage.itemID, new ItemRendererLuggage());
+			MinecraftForgeClient.registerItemRenderer(OpenBlocks.Items.luggage, new ItemRendererLuggage());
 			RenderingRegistry.registerEntityRenderingHandler(EntityLuggage.class, new EntityLuggageRenderer());
 		}
 
 		if (OpenBlocks.Blocks.paintCan != null) {
-			MinecraftForgeClient.registerItemRenderer(OpenBlocks.Blocks.paintCan.blockID, new ItemRendererPaintCan());
+			MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(OpenBlocks.Blocks.paintCan), new ItemRendererPaintCan());
 		}
 
 		if (OpenBlocks.Items.hangGlider != null) {
 			RenderingRegistry.registerEntityRenderingHandler(EntityHangGlider.class, new EntityHangGliderRenderer());
 
 			ItemRendererHangGlider hangGliderRenderer = new ItemRendererHangGlider();
-			MinecraftForgeClient.registerItemRenderer(OpenBlocks.Items.hangGlider.itemID, hangGliderRenderer);
+			MinecraftForgeClient.registerItemRenderer(OpenBlocks.Items.hangGlider, hangGliderRenderer);
 			MinecraftForge.EVENT_BUS.register(hangGliderRenderer);
 
 			attachPlayerRenderer();
@@ -147,7 +143,7 @@ public class ClientProxy implements IOpenBlocksProxy {
 		}
 
 		if (OpenBlocks.Items.devNull != null) {
-			MinecraftForgeClient.registerItemRenderer(OpenBlocks.Items.devNull.itemID, new ItemRendererDevNull());
+			MinecraftForgeClient.registerItemRenderer(OpenBlocks.Items.devNull, new ItemRendererDevNull());
 		}
 
 		MinecraftForge.EVENT_BUS.register(new PlayerRenderEventHandler());
@@ -165,9 +161,9 @@ public class ClientProxy implements IOpenBlocksProxy {
 			RenderingRegistry.registerEntityRenderingHandler(EntityGoldenEye.class, new EntityGoldenEyeRenderer());
 		}
 
-		if (OpenBlocks.Blocks.radio != null) {
-			RadioManager.instance.init();
-		}
+//		if (OpenBlocks.Blocks.radio != null) {
+//			RadioManager.instance.init();
+//		} TODO PORT RADIO
 
 		if (OpenBlocks.Blocks.elevator != null) {
 			MinecraftForge.EVENT_BUS.register(new ElevatorMovementHandler());

@@ -5,14 +5,14 @@ import java.util.Map;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.ForgeSubscribe;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import openblocks.OpenBlocks.Enchantments;
 import openmods.utils.EnchantmentUtils;
 
 public class LastStandEnchantmentsHandler {
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onHurt(LivingHurtEvent e) {
 
 		if (e.entityLiving instanceof EntityPlayer) {

@@ -2,14 +2,15 @@ package openblocks.client.renderer.entity;
 
 import java.util.Map;
 
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.Event;
-import net.minecraftforge.event.ForgeSubscribe;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 import com.google.common.collect.Maps;
 
@@ -35,9 +36,9 @@ public class EntitySelectionHandler {
 
 	private final Map<Class<? extends Entity>, ISelectionRenderer<Entity>> registry = Maps.newIdentityHashMap();
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void renderEvents(RenderWorldLastEvent evt) {
-		final Minecraft mc = evt.context.mc;
+		final Minecraft mc = FMLClientHandler.instance().getClient();
 
 		if (mc.objectMouseOver != null) {
 			final Entity target = mc.objectMouseOver.entityHit;
@@ -48,7 +49,7 @@ public class EntitySelectionHandler {
 		}
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	@SuppressWarnings("unchecked")
 	public void handleRegister(RegisterSelectionRendererEvent<?> evt) {
 		registry.put(evt.cls, (ISelectionRenderer<Entity>)evt.renderer);

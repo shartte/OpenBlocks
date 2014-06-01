@@ -5,7 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.event.ForgeSubscribe;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import openblocks.events.ElevatorActionEvent;
 import openmods.movement.PlayerMovementEvent;
 import openmods.tileentity.OpenTileEntity;
@@ -18,13 +18,13 @@ public class ElevatorMovementHandler {
 			int x = MathHelper.floor_double(player.posX);
 			int y = MathHelper.floor_double(player.boundingBox.minY) - 1;
 			int z = MathHelper.floor_double(player.posZ);
-			TileEntity te = world.getBlockTileEntity(x, y, z);
+			TileEntity te = world.getTileEntity(x, y, z);
 			if (te instanceof OpenTileEntity) return (OpenTileEntity)te;
 		}
 		return null;
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onPlayerMovement(PlayerMovementEvent evt) {
 		OpenTileEntity te = getTileUnderPlayer(evt.entityPlayer);
 		if (te == null) return;

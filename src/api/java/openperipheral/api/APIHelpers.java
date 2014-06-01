@@ -12,7 +12,7 @@ public class APIHelpers {
 
 	static {
 		logger = Logger.getLogger("OpenPeripheral API");
-		logger.setParent(FMLLog.getLogger());
+//		TODO fix upstream logger.setParent(FMLLog.getLogger());
 	}
 
 	public static <A> boolean callWithoutReturn(String klazzName, String methodName, Class<? extends A> argType, A argValue) {

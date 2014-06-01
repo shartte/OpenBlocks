@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.world.World;
 import openblocks.common.entity.EntityMiniMe;
+import openmods.utils.PlayerUtils;
 import openmods.utils.WorldUtils;
 
 public class EntityAIPickupPlayer extends EntityAIBase {
@@ -72,7 +73,7 @@ public class EntityAIPickupPlayer extends EntityAIBase {
 
 	private boolean canRidePlayer(EntityPlayer player) {
 		return player != null &&
-				player.username != minime.getUsername() &&
+				!PlayerUtils.getName(player).equals(minime.getUsername()) &&
 				player.ridingEntity == null;
 	}
 }

@@ -4,13 +4,15 @@ import java.util.List;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent;
@@ -86,13 +88,13 @@ public class TileEntityBlockBreaker extends SyncedTileEntity implements INeighbo
 		final int z = zCoord + direction.offsetZ;
 
 		if (worldObj.blockExists(x, y, z)) {
-			int blockId = worldObj.getBlockId(x, y, z);
-			final Block block = Block.blocksList[blockId];
+			final Block block = worldObj.getBlock(x, y, z);
 			if (block != null) {
 				final int metadata = worldObj.getBlockMetadata(x, y, z);
-				if (block != Block.bedrock && block.getBlockHardness(worldObj, z, y, z) > -1.0F) {
+				if (block != Blocks.bedrock && block.getBlockHardness(worldObj, z, y, z) > -1.0F) {
 					breakBlock(direction, x, y, z, block, metadata);
-					worldObj.playAuxSFX(2001, x, y, z, blockId + (metadata << 12));
+          // TODO No idea what this does or how to port it without block ids...
+//				  worldObj.playAuxSFX(2001, x, y, z, blockId + (metadata << 12));
 					worldObj.setBlockToAir(x, y, z);
 				}
 			}
@@ -101,17 +103,18 @@ public class TileEntityBlockBreaker extends SyncedTileEntity implements INeighbo
 	}
 
 	private void breakBlock(final ForgeDirection direction, final int x, final int y, final int z, final Block block, final int metadata) {
-		FakePlayerPool.instance.executeOnPlayer(worldObj, new PlayerUser() {
+    // TODO: It's not clear if we can safely cast world here...
+		FakePlayerPool.instance.executeOnPlayer((WorldServer) worldObj, new PlayerUser() {
 			@Override
 			public void usePlayer(OpenModsFakePlayer fakePlayer) {
 				fakePlayer.inventory.currentItem = 0;
-				fakePlayer.inventory.setInventorySlotContents(0, new ItemStack(Item.pickaxeDiamond, 0, 0));
+				fakePlayer.inventory.setInventorySlotContents(0, new ItemStack(Items.diamond_pickaxe, 0, 0));
 
 				BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(x, y, z, worldObj, block, blockMetadata, fakePlayer);
 				if (MinecraftForge.EVENT_BUS.post(event)) return;
 
 				if (ForgeHooks.canHarvestBlock(block, fakePlayer, metadata)) {
-					List<ItemStack> items = block.getBlockDropped(worldObj, x, y, z, metadata, 0);
+					List<ItemStack> items = block.getDrops(worldObj, x, y, z, metadata, 0);
 					if (items != null) {
 						ForgeDirection back = direction.getOpposite();
 						ejectAt(worldObj,
@@ -151,7 +154,7 @@ public class TileEntityBlockBreaker extends SyncedTileEntity implements INeighbo
 	}
 
 	@Override
-	public void onNeighbourChanged(int blockId) {
+	public void onNeighbourChanged(Block block) {
 		if (!worldObj.isRemote) {
 			setRedstoneSignal(worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord));
 		}
@@ -160,7 +163,7 @@ public class TileEntityBlockBreaker extends SyncedTileEntity implements INeighbo
 	@Override
 	public void onSynced(Set<ISyncableObject> changes) {
 		if (changes.contains(activated)) {
-			worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		}
 	}
 

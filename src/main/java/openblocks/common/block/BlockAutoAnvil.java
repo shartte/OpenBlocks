@@ -1,15 +1,15 @@
 package openblocks.common.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import openblocks.Config;
+import net.minecraft.init.Blocks;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockAutoAnvil extends OpenBlock {
 
 	public BlockAutoAnvil() {
-		super(Config.blockAutoAnvilId, Material.anvil);
-		setStepSound(soundAnvilFootstep);
+		super(Material.anvil);
+		setStepSound(Blocks.anvil.stepSound);
 		setRotationMode(BlockRotationMode.FOUR_DIRECTIONS);
 		setInventoryRenderRotation(ForgeDirection.NORTH);
 	}
@@ -20,7 +20,7 @@ public class BlockAutoAnvil extends OpenBlock {
 	}
 
 	@Override
-	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) {
+  public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 		return false;
 	}
 

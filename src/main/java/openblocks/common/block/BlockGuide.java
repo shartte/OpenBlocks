@@ -1,22 +1,20 @@
 package openblocks.common.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import openblocks.Config;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockGuide extends OpenBlock {
 
 	public static class Icons {
-		public static Icon ends;
-		public static Icon side;
+		public static IIcon ends;
+		public static IIcon side;
 	}
 
 	public BlockGuide() {
-		super(Config.blockGuideId, Material.rock);
+		super(Material.rock);
 	}
 
 	@Override
@@ -35,7 +33,7 @@ public class BlockGuide extends OpenBlock {
 	}
 
 	@Override
-	public void registerIcons(IconRegister registry) {
+	public void registerBlockIcons(IIconRegister registry) {
 		Icons.ends = registry.registerIcon("openblocks:guide");
 		Icons.side = registry.registerIcon("openblocks:guide_side");
 
@@ -49,12 +47,12 @@ public class BlockGuide extends OpenBlock {
 	}
 
 	@Override
-	public boolean canBeReplacedByLeaves(World world, int x, int y, int z) {
+	public boolean canBeReplacedByLeaves(IBlockAccess world, int x, int y, int z) {
 		return false;
 	}
 
 	@Override
-	public boolean isFlammable(IBlockAccess world, int x, int y, int z, int metadata, ForgeDirection face) {
+	public boolean isFlammable(IBlockAccess world, int x, int y, int z, ForgeDirection face) {
 		return false;
 	}
 

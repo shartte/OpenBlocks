@@ -2,7 +2,7 @@ package openblocks.common.item;
 
 import java.util.Map;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -15,12 +15,12 @@ import openblocks.common.entity.EntityHangGlider;
 public class ItemHangGlider extends Item {
 
 	public ItemHangGlider() {
-		super(Config.itemHangGliderId);
+
 		setCreativeTab(OpenBlocks.tabOpenBlocks);
 	}
 
 	@Override
-	public void registerIcons(IconRegister registry) {
+	public void registerIcons(IIconRegister registry) {
 		itemIcon = registry.registerIcon("openblocks:hangglider");
 	}
 

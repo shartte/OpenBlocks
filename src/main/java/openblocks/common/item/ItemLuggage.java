@@ -1,6 +1,6 @@
 package openblocks.common.item;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -9,17 +9,18 @@ import net.minecraft.world.World;
 import openblocks.Config;
 import openblocks.OpenBlocks;
 import openblocks.common.entity.EntityLuggage;
+import openmods.utils.PlayerUtils;
 
 public class ItemLuggage extends Item {
 
 	public ItemLuggage() {
-		super(Config.itemLuggageId);
+
 		setCreativeTab(OpenBlocks.tabOpenBlocks);
 		setMaxStackSize(1);
 	}
 
 	@Override
-	public void registerIcons(IconRegister registry) {
+	public void registerIcons(IIconRegister registry) {
 		itemIcon = registry.registerIcon("openblocks:luggage");
 	}
 
@@ -32,7 +33,7 @@ public class ItemLuggage extends Item {
 			Vec3 vec32 = vec3.addVector(vec31.xCoord * 2.0f, vec31.yCoord * 2.0f, vec31.zCoord * 2.0f);
 			EntityLuggage luggage = new EntityLuggage(world);
 			luggage.setPositionAndRotation(0.5 + vec32.xCoord, vec3.yCoord, 0.5 + vec32.zCoord, 0, 0);
-			luggage.setOwner(player.username);
+			luggage.setOwner(PlayerUtils.getName(player));
 			if (itemStack.hasTagCompound()) {
 				luggage.getInventory().readFromNBT(itemStack.getTagCompound());
 				if (luggage.getInventory().getSizeInventory() > 27) {

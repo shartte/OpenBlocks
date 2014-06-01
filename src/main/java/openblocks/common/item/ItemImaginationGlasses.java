@@ -2,15 +2,15 @@ package openblocks.common.item;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumArmorMaterial;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import openblocks.OpenBlocks;
 import openblocks.common.tileentity.TileEntityImaginary;
@@ -32,13 +32,13 @@ public class ItemImaginationGlasses extends ItemArmor {
 
 	public static class ItemCrayonGlasses extends ItemImaginationGlasses {
 
-		public ItemCrayonGlasses(int itemId) {
-			super(itemId, Type.CRAYON);
+		public ItemCrayonGlasses() {
+			super(Type.CRAYON);
 		}
 
 		@Override
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public void getSubItems(int itemId, CreativeTabs tab, List result) {
+		public void getSubItems(Item item, CreativeTabs tab, List result) {
 			for (ColorMeta color : ColorUtils.getAllColors())
 				result.add(createCrayonGlasses(color.rgb));
 		}
@@ -82,8 +82,8 @@ public class ItemImaginationGlasses extends ItemArmor {
 
 	public final Type type;
 
-	public ItemImaginationGlasses(int itemId, Type type) {
-		super(itemId, EnumArmorMaterial.GOLD, 1, ARMOR_HELMET);
+	public ItemImaginationGlasses(Type type) {
+		super(ArmorMaterial.GOLD, 1, ARMOR_HELMET);
 		this.type = type;
 		setCreativeTab(OpenBlocks.tabOpenBlocks);
 		setHasSubtypes(true);
@@ -133,12 +133,12 @@ public class ItemImaginationGlasses extends ItemArmor {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister registry) {
+	public void registerIcons(IIconRegister registry) {
 		itemIcon = registry.registerIcon(type.iconName);
 	}
 
 	@Override
-	public Icon getIcon(ItemStack stack, int pass) {
+	public IIcon getIcon(ItemStack stack, int pass) {
 		return itemIcon;
 	}
 
@@ -153,7 +153,7 @@ public class ItemImaginationGlasses extends ItemArmor {
 
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void getSubItems(int itemId, CreativeTabs tab, List result) {
+	public void getSubItems(Item item, CreativeTabs tab, List result) {
 		result.add(new ItemStack(this));
 	}
 

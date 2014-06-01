@@ -8,10 +8,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatMessageComponent;
+
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
-import net.minecraftforge.event.ForgeSubscribe;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import openblocks.Config;
@@ -49,7 +50,7 @@ public class FlimFlamEnchantmentsHandler {
 		return blacklist;
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onReconfig(ConfigurationChange.Post evt) {
 		if (evt.check("tomfoolery", "flimFlamBlacklist")) blacklist = null;
 	}
@@ -81,12 +82,12 @@ public class FlimFlamEnchantmentsHandler {
 		return (prop instanceof Luck)? (Luck)prop : null;
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onEntityConstruct(EntityEvent.EntityConstructing evt) {
 		if (evt.entity instanceof EntityPlayer) evt.entity.registerExtendedProperties(LUCK_PROPERTY, new Luck());
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onDamage(LivingHurtEvent e) {
 		if (!(e.entityLiving instanceof EntityPlayer)) return;
 		if (e.entityLiving.worldObj.isRemote) return;
@@ -170,7 +171,7 @@ public class FlimFlamEnchantmentsHandler {
 						if (effectMeta.action().execute(player)) {
 							property.luck -= effectMeta.cost();
 							Log.fine("Player %s flim-flammed with %s, current luck: %s", player, effectMeta.name(), property.luck);
-							if (!effectMeta.isSilent()) player.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("openblocks.flim_flammed"));
+							if (!effectMeta.isSilent()) player.addChatMessage(new ChatComponentTranslation("openblocks.flim_flammed"));
 							return;
 						}
 					} catch (Throwable t) {

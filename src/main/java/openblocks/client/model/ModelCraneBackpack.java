@@ -1,5 +1,6 @@
 package openblocks.client.model;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.model.ModelBiped;
@@ -13,7 +14,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import openblocks.common.CraneRegistry;
 import openblocks.common.entity.EntityMagnet;
 import openblocks.common.item.ItemCraneBackpack;
@@ -84,7 +85,7 @@ public class ModelCraneBackpack extends ModelBiped {
 		return prev + partialTickTime * (current - prev);
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void renderLines(RenderPlayerEvent.Pre evt) {
 		final EntityPlayer player = evt.entityPlayer;
 
@@ -193,7 +194,7 @@ public class ModelCraneBackpack extends ModelBiped {
 	}
 
 	private void drawArm(RenderWorldLastEvent evt, final EntityPlayer player) {
-		final TextureManager tex = evt.context.renderEngine;
+		final TextureManager tex = FMLClientHandler.instance().getClient().renderEngine;
 		tex.bindTexture(texture);
 
 		GL11.glColor3f(1, 1, 1);
@@ -210,9 +211,9 @@ public class ModelCraneBackpack extends ModelBiped {
 		GL11.glEnable(GL11.GL_LIGHTING);
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void renderFppArm(RenderWorldLastEvent evt) {
-		final Minecraft mc = evt.context.mc;
+		final Minecraft mc = FMLClientHandler.instance().getClient();
 
 		if (mc.gameSettings.thirdPersonView != 0) return;
 

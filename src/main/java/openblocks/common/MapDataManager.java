@@ -8,10 +8,9 @@ import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-import net.minecraftforge.event.ForgeSubscribe;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import openblocks.Config;
 import openblocks.events.EventTypes;
 import openmods.Log;
@@ -25,7 +24,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public class MapDataManager {
@@ -129,13 +127,9 @@ public class MapDataManager {
 		world.setItemData(data.mapName, data);
 	}
 
-	private static World getPlayerWorld(Player player) {
-		return ((EntityPlayer)player).worldObj;
-	}
-
-	@ForgeSubscribe
+  @SubscribeEvent
 	public void onMapDataRequest(MapDataRequestEvent evt) {
-		World world = getPlayerWorld(evt.player);
+    World world = evt.player.worldObj;
 
 		MapDataResponseEvent response = new MapDataResponseEvent();
 		for (Integer mapId : evt.mapIds) {
@@ -150,9 +144,9 @@ public class MapDataManager {
 		evt.reply(response);
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onMapDataResponse(MapDataResponseEvent evt) {
-		World world = getPlayerWorld(evt.player);
+    World world = evt.player.worldObj;
 
 		for (Map.Entry<Integer, HeightMapData> e : evt.maps.entrySet()) {
 			HeightMapData mapData = e.getValue();
@@ -160,9 +154,9 @@ public class MapDataManager {
 		}
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onMapUpdates(MapUpdatesEvent evt) {
-		World world = getPlayerWorld(evt.player);
+    World world = evt.player.worldObj;
 
 		Set<Integer> mapsToUpdate = Sets.newHashSet();
 		for (Integer mapId : evt.mapIds) {
@@ -215,13 +209,8 @@ public class MapDataManager {
 					String modId = parts[0];
 					String blockName = parts[1];
 
-					Block block = null;
-					if ("id".equalsIgnoreCase(modId)) {
-						int blockId = Integer.parseInt(blockName);
-						block = Block.blocksList[blockId];
-					} else {
-						block = GameRegistry.findBlock(modId, blockName);
-					}
+          // TODO: Unclear whether this is enough, maybe need to check Block.blockRegistry as well
+					Block block = GameRegistry.findBlock(modId, blockName);
 
 					if (block != null) blockBlacklist.add(block);
 					else Log.info("Can't find block %s", entry);
@@ -234,7 +223,7 @@ public class MapDataManager {
 		return blockBlacklist;
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onReconfig(ConfigurationChange.Post evt) {
 		if (evt.check("cartographer", "blockBlacklist")) blockBlacklist = null;
 	}

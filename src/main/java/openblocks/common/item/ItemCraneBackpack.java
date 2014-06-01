@@ -1,11 +1,10 @@
 package openblocks.common.item;
 
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
@@ -24,7 +23,7 @@ public class ItemCraneBackpack extends ItemArmor {
 	public static final String TEXTURE_CRANE = "openblocks:textures/models/crane.png";
 
 	public ItemCraneBackpack() {
-		super(Config.itemCraneId, EnumArmorMaterial.IRON, 2, ARMOR_CHESTPIECE);
+		super(ArmorMaterial.IRON, 2, ARMOR_CHESTPIECE);
 		setCreativeTab(OpenBlocks.tabOpenBlocks);
 	}
 
@@ -41,12 +40,12 @@ public class ItemCraneBackpack extends ItemArmor {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister registry) {
+	public void registerIcons(IIconRegister registry) {
 		itemIcon = registry.registerIcon("openblocks:crane_backpack");
 	}
 
 	@Override
-	public String getArmorTexture(ItemStack stack, Entity entity, int slot, int layer) {
+	public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type) {
 		return TEXTURE_CRANE;
 	}
 
@@ -62,11 +61,11 @@ public class ItemCraneBackpack extends ItemArmor {
 						/ 180);
 
 		AxisAlignedBB aabb = AxisAlignedBB.getAABBPool().getAABB(posX - 0.1, posY - 0.1, posZ - 0.1, posX + 0.1, posY + 0.1, posZ + 0.1);
-		return !world.getCollidingBlockBounds(aabb).isEmpty();
+		return world.checkBlockCollision(aabb);
 	}
 
 	@Override
-	public void onArmorTickUpdate(World world, EntityPlayer player, ItemStack itemStack) {
+	public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
 		CraneRegistry.Data data = CraneRegistry.instance.getData(player, true);
 		if (!world.isRemote) CraneRegistry.instance.ensureMagnetExists(player);
 

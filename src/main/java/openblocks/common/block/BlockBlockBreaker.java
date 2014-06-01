@@ -1,10 +1,10 @@
 package openblocks.common.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.Config;
 import openblocks.common.tileentity.TileEntityBlockBreaker;
 import cpw.mods.fml.relauncher.Side;
@@ -14,14 +14,14 @@ public class BlockBlockBreaker extends OpenBlock {
 
 	@SideOnly(Side.CLIENT)
 	private static class Icons {
-		public static Icon top;
-		public static Icon top_active;
-		public static Icon bottom;
-		public static Icon side;
+		public static IIcon top;
+		public static IIcon top_active;
+		public static IIcon bottom;
+		public static IIcon side;
 	}
 
 	public BlockBlockBreaker() {
-		super(Config.blockBlockBreakerId, Material.rock);
+		super(Material.rock);
 		setRotationMode(BlockRotationMode.SIX_DIRECTIONS);
 		setPlacementMode(BlockPlacementMode.ENTITY_ANGLE);
 		setInventoryRenderRotation(ForgeDirection.EAST);
@@ -34,7 +34,7 @@ public class BlockBlockBreaker extends OpenBlock {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister registry) {
+	public void registerBlockIcons(IIconRegister registry) {
 
 		Icons.top = registry.registerIcon("openblocks:blockBreaker");
 		Icons.top_active = registry.registerIcon("openblocks:blockBreaker_active");
@@ -51,7 +51,7 @@ public class BlockBlockBreaker extends OpenBlock {
 	}
 
 	@Override
-	public Icon getUnrotatedTexture(ForgeDirection direction, IBlockAccess world, int x, int y, int z) {
+	public IIcon getUnrotatedTexture(ForgeDirection direction, IBlockAccess world, int x, int y, int z) {
 		if (direction.equals(ForgeDirection.UP)) {
 			TileEntityBlockBreaker tile = getTileEntity(world, x, y, z, TileEntityBlockBreaker.class);
 			if (tile != null && tile.isActivated()) { return Icons.top_active; }

@@ -2,6 +2,7 @@ package openblocks.common.item;
 
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,8 +11,8 @@ import openmods.item.ItemOpenBlock;
 
 public class ItemTrophyBlock extends ItemOpenBlock {
 
-	public ItemTrophyBlock(int par1) {
-		super(par1);
+	public ItemTrophyBlock(Block block) {
+		super(block);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -22,7 +23,7 @@ public class ItemTrophyBlock extends ItemOpenBlock {
 			if (tag.hasKey("entity")) {
 				String entityKey = tag.getString("entity");
 				Trophy trophyType = Trophy.valueOf(entityKey);
-				list.add(trophyType.getEntity().getTranslatedEntityName());
+				list.add(trophyType.getEntity().getCommandSenderName()); // TODO: getCommandSenderName may not be getTranslatedEntityName
 			}
 		}
 	}

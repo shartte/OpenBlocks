@@ -5,6 +5,7 @@ import java.util.Iterator;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
@@ -50,7 +51,8 @@ public class EntityItemProjectile extends EntityItem {
 		this.prevPosY = this.posY;
 		this.prevPosZ = this.posZ;
 		this.motionY -= 0.03999999910593033D;
-		this.noClip = pushOutOfBlocks(this.posX,
+    // TODO Check if this is correctly mapped. was: pushOutOfBlocks
+		this.noClip = func_145771_j(this.posX,
 				(this.boundingBox.minY + this.boundingBox.maxY) / 2.0D,
 				this.posZ);
 		moveEntity(this.motionX, this.motionY, this.motionZ);
@@ -59,10 +61,10 @@ public class EntityItemProjectile extends EntityItem {
 				|| (int)this.prevPosZ != (int)this.posZ;
 
 		if (flag || this.ticksExisted % 25 == 0) {
-			if (this.worldObj.getBlockMaterial(
+			if (this.worldObj.getBlock(
 					MathHelper.floor_double(this.posX),
 					MathHelper.floor_double(this.posY),
-					MathHelper.floor_double(this.posZ)) == Material.lava) {
+					MathHelper.floor_double(this.posZ)).getMaterial() == Material.lava) {
 				this.motionY = 0.20000000298023224D;
 				this.motionX = (this.rand.nextFloat() - this.rand
 						.nextFloat()) * 0.2F;
@@ -83,14 +85,13 @@ public class EntityItemProjectile extends EntityItem {
 		// Keep ground friction
 		if (this.onGround) {
 			f = 0.58800006F;
-			int i = this.worldObj.getBlockId(
+			Block block = this.worldObj.getBlock(
 					MathHelper.floor_double(this.posX),
 					MathHelper.floor_double(this.boundingBox.minY) - 1,
 					MathHelper.floor_double(this.posZ));
-
-			if (i > 0) {
-				f = Block.blocksList[i].slipperiness * 0.98F;
-			}
+      if (block != Blocks.air) {
+		    f = block.slipperiness * 0.98F;
+      }
 		}
 
 		this.motionX *= f;

@@ -1,9 +1,9 @@
 package openblocks.common.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.Config;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -11,13 +11,13 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class BlockBlockPlacer extends OpenBlock {
 
 	public static class Icons {
-		public static Icon top;
-		public static Icon bottom;
-		public static Icon sides;
+		public static IIcon top;
+		public static IIcon bottom;
+		public static IIcon sides;
 	}
 
 	public BlockBlockPlacer() {
-		super(Config.blockBlockPlacerId, Material.rock);
+		super(Material.rock);
 		setRotationMode(BlockRotationMode.SIX_DIRECTIONS);
 		setInventoryRenderRotation(ForgeDirection.EAST);
 	}
@@ -29,7 +29,7 @@ public class BlockBlockPlacer extends OpenBlock {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister registry) {
+	public void registerBlockIcons(IIconRegister registry) {
 		Icons.top = registry.registerIcon("openblocks:blockPlacer");
 		Icons.sides = registry.registerIcon("openblocks:blockPlacer_side");
 		Icons.bottom = registry.registerIcon("openblocks:blockPlacer_bottom");

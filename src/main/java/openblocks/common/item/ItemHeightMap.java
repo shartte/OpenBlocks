@@ -2,7 +2,7 @@ package openblocks.common.item;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -16,7 +16,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ItemHeightMap extends Item {
 
 	public ItemHeightMap() {
-		super(Config.itemHeightMap);
+
 		setHasSubtypes(true);
 		setMaxDamage(0);
 	}
@@ -39,13 +39,13 @@ public class ItemHeightMap extends Item {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister registry) {
+	public void registerIcons(IIconRegister registry) {
 		itemIcon = registry.registerIcon("openblocks:height_map");
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	@SuppressWarnings("rawtypes")
-	public void getSubItems(int id, CreativeTabs tab, List items) {}
+	public void getSubItems(Item item, CreativeTabs tab, List items) {}
 
 }

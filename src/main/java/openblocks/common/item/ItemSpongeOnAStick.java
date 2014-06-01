@@ -1,8 +1,9 @@
 package openblocks.common.item;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -15,7 +16,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ItemSpongeOnAStick extends Item {
 
 	public ItemSpongeOnAStick() {
-		super(Config.itemSpongeOnAStickId);
+
 		setCreativeTab(OpenBlocks.tabOpenBlocks);
 		setMaxStackSize(1);
 		setMaxDamage(Config.spongeMaxDamage);
@@ -23,7 +24,7 @@ public class ItemSpongeOnAStick extends Item {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister registry) {
+	public void registerIcons(IIconRegister registry) {
 		itemIcon = registry.registerIcon("openblocks:spongeonastick");
 	}
 
@@ -47,10 +48,10 @@ public class ItemSpongeOnAStick extends Item {
 		for (int x = -Config.spongeStickRange; x <= Config.spongeStickRange; x++) {
 			for (int y = -Config.spongeStickRange; y <= Config.spongeStickRange; y++) {
 				for (int z = -Config.spongeStickRange; z <= Config.spongeStickRange; z++) {
-					Material material = world.getBlockMaterial(xCoord + x, yCoord + y, zCoord + z);
+					Material material = world.getBlock(xCoord + x, yCoord + y, zCoord + z).getMaterial();
 					if (material.isLiquid()) {
 						hitLava |= material == Material.lava;
-						world.setBlock(xCoord + x, yCoord + y, zCoord + z, 0, 0, BlockNotifyFlags.SEND_TO_CLIENTS);
+						world.setBlock(xCoord + x, yCoord + y, zCoord + z, Blocks.air, 0, BlockNotifyFlags.SEND_TO_CLIENTS);
 						if (++damage >= getMaxDamage()) break;
 					}
 				}

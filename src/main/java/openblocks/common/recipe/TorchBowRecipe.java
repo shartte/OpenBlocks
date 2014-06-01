@@ -1,7 +1,7 @@
 package openblocks.common.recipe;
 
+import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,13 +22,13 @@ public class TorchBowRecipe implements IRecipe {
 		for (int i = 0; i < inventorycrafting.getSizeInventory(); i++) {
 			ItemStack stack = inventorycrafting.getStackInSlot(i);
 			if (stack != null) {
-				if (stack.getItem() == Item.bow && bowStack == null) {
+				if (stack.getItem() == Items.bow && bowStack == null) {
 					bowStack = stack;
 					continue;
-				} else if (stack.getItem() == Item.flint && flintStack == null) {
+				} else if (stack.getItem() == Items.flint && flintStack == null) {
 					flintStack = stack;
 					continue;
-				} else if (stack.getItem() == Item.bone && boneStack == null) {
+				} else if (stack.getItem() == Items.bone && boneStack == null) {
 					boneStack = stack;
 					continue;
 				}
@@ -65,7 +65,7 @@ public class TorchBowRecipe implements IRecipe {
 
 	@Override
 	public ItemStack getRecipeOutput() {
-		return new ItemStack(Item.bow);
+		return new ItemStack(Items.bow);
 	}
 
 }

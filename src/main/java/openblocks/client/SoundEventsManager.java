@@ -14,7 +14,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.event.sound.PlayStreamingEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import openblocks.Config;
 import openblocks.client.Icons.IDrawableIcon;
 import openblocks.common.item.ItemSonicGlasses;
@@ -92,12 +92,12 @@ public class SoundEventsManager {
 		events.add(new SoundEvent(x, y, z, icon, size, time));
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onSoundEvent(PlaySoundEvent evt) {
 		if (SoundEventsManager.isPlayerWearingGlasses()) addEvent(evt.x, evt.y, evt.z, evt.name, Math.log(evt.volume + 1), 5 * evt.pitch);
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onSoundEvent(PlayStreamingEvent evt) {
 		if (SoundEventsManager.isPlayerWearingGlasses()) {
 			String soundName = SoundIconRegistry.CATEGORY_STREAMING + "."
@@ -196,12 +196,12 @@ public class SoundEventsManager {
 		if (renderNotPumpkin != null) GL11.glDeleteLists(renderNotPumpkin, 1);
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void renderEvents(RenderWorldLastEvent evt) {
-		final Minecraft mc = evt.context.mc;
+		final Minecraft mc = FMLClientHandler.instance().getClient();
 
 		if (mc.gameSettings.thirdPersonView != 0) return;
-		final TextureManager tex = evt.context.renderEngine;
+		final TextureManager tex = mc.renderEngine;
 		final Entity rve = mc.renderViewEntity;
 		if (!isEntityWearingGlasses(rve)) return;
 

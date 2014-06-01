@@ -1,19 +1,17 @@
 package openblocks.common.item;
 
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EnumStatus;
-import net.minecraft.item.EnumArmorMaterial;
+
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
-import openblocks.Config;
 import openblocks.OpenBlocks;
 import openblocks.client.model.ModelSleepingBag;
 import openmods.utils.BlockUtils;
@@ -26,18 +24,18 @@ public class ItemSleepingBag extends ItemArmor {
 	public static final String TEXTURE_SLEEPINGBAG = "openblocks:textures/models/sleepingbag.png";
 
 	public ItemSleepingBag() {
-		super(Config.itemSleepingBagId, EnumArmorMaterial.IRON, 2, ARMOR_CHESTPIECE);
+		super(ArmorMaterial.IRON, 2, ARMOR_CHESTPIECE);
 		setCreativeTab(OpenBlocks.tabOpenBlocks);
 	}
 
 	@Override
-	public String getArmorTexture(ItemStack stack, Entity entity, int slot, int layer) {
+	public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type) {
 		return TEXTURE_SLEEPINGBAG;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister registry) {
+	public void registerIcons(IIconRegister registry) {
 		itemIcon = registry.registerIcon("openblocks:sleepingbag");
 	}
 
@@ -51,8 +49,8 @@ public class ItemSleepingBag extends ItemArmor {
 	public ItemStack onItemRightClick(ItemStack sleepingBagStack, World world, EntityPlayer player) {
 		if (world.isRemote) { return sleepingBagStack; }
 		ChunkCoordinates spawn = player.getBedLocation(world.provider.dimensionId);
-		EnumStatus status = player.sleepInBedAt((int)player.posX, (int)player.posY, (int)player.posZ);
-		if (status == EnumStatus.OK) {
+		EntityPlayer.EnumStatus status = player.sleepInBedAt((int)player.posX, (int)player.posY, (int)player.posZ);
+		if (status == EntityPlayer.EnumStatus.OK) {
 			int i = EntityLiving.getArmorPosition(sleepingBagStack) - 1;
 			ItemStack currentArmor = player.getCurrentArmor(i);
 			if (currentArmor != null) {
@@ -73,7 +71,7 @@ public class ItemSleepingBag extends ItemArmor {
 	}
 
 	@Override
-	public void onArmorTickUpdate(World world, EntityPlayer player, ItemStack itemStack) {
+	public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
 		if (!world.isRemote) {
 			NBTTagCompound tag = getOrCreateTag(itemStack);
 			if (!player.isPlayerSleeping()) {
@@ -81,8 +79,8 @@ public class ItemSleepingBag extends ItemArmor {
 					ejectSleepingBagFromPlayer(player, itemStack);
 				} else {
 					ChunkCoordinates spawn = player.getBedLocation(world.provider.dimensionId);
-					EnumStatus status = player.sleepInBedAt((int)player.posX, (int)player.posY, (int)player.posZ);
-					if (status == EnumStatus.OK) {
+					EntityPlayer.EnumStatus status = player.sleepInBedAt((int)player.posX, (int)player.posY, (int)player.posZ);
+					if (status == EntityPlayer.EnumStatus.OK) {
 						saveOriginalSpawn(spawn, itemStack);
 					} else {
 						ejectSleepingBagFromPlayer(player, itemStack);

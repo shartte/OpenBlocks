@@ -1,15 +1,16 @@
 package openblocks.common.block;
 
-import static net.minecraftforge.common.ForgeDirection.DOWN;
-import static net.minecraftforge.common.ForgeDirection.EAST;
-import static net.minecraftforge.common.ForgeDirection.WEST;
+import static net.minecraftforge.common.util.ForgeDirection.DOWN;
+import static net.minecraftforge.common.util.ForgeDirection.EAST;
+import static net.minecraftforge.common.util.ForgeDirection.WEST;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.Config;
 import openblocks.common.tileentity.TileEntityFlag;
 import cpw.mods.fml.relauncher.Side;
@@ -44,7 +45,7 @@ public class BlockFlag extends OpenBlock {
 	}
 
 	public BlockFlag() {
-		super(Config.blockFlagId, Material.circuits);
+		super(Material.circuits);
 		setupDimensionsFromCenter(0.5f, 0f, 0.5f, 1 / 16f, 1f, 1 / 16f);
 		setRotationMode(BlockRotationMode.SIX_DIRECTIONS);
 		setPlacementMode(BlockPlacementMode.SURFACE);
@@ -62,7 +63,7 @@ public class BlockFlag extends OpenBlock {
 	}
 
 	@Override
-	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) {
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 		return false;
 	}
 
@@ -89,10 +90,9 @@ public class BlockFlag extends OpenBlock {
 	@Override
 	public boolean canPlaceBlockOnSide(World world, int x, int y, int z, ForgeDirection side) {
 		if (side == DOWN) {
-			int belowBlockId = world.getBlockId(x, y - 1, z);
-			Block belowBlock = Block.blocksList[belowBlockId];
+			Block belowBlock = world.getBlock(x, y - 1, z);
 			if (belowBlock != null) {
-				if (belowBlock == Block.fence) {
+				if (belowBlock == Blocks.fence) {
 					return true;
 				} else if (belowBlock == this) {
 					TileEntityFlag flag = getTileEntity(world, x, y - 1, z, TileEntityFlag.class);
@@ -105,8 +105,8 @@ public class BlockFlag extends OpenBlock {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int par1, int par2) {
-		return Block.planks.getIcon(par1, par2);
+	public IIcon getIcon(int par1, int par2) {
+		return Blocks.planks.getIcon(par1, par2);
 	}
 
 	@Override

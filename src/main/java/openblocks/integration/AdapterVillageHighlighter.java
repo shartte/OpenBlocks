@@ -23,7 +23,7 @@ public class AdapterVillageHighlighter implements IPeripheralAdapter {
 	public Map<?, ?> getVillages(TileEntityVillageHighlighter vh) {
 		Map<Integer, Object> map = Maps.newHashMap();
 		int i = 1;
-		for (Village village : (List<Village>)vh.worldObj.villageCollectionObj.getVillageList()) {
+		for (Village village : (List<Village>)vh.getWorldObj().villageCollectionObj.getVillageList()) {
 			if (village.isInRange(vh.xCoord, vh.yCoord, vh.zCoord)) {
 				Map<String, Object> villageMap = Maps.newHashMap();
 				villageMap.put("x", village.getCenter().posX - vh.xCoord);

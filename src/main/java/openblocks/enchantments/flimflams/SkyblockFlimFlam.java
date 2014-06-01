@@ -1,10 +1,10 @@
 package openblocks.enchantments.flimflams;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.api.IFlimFlamAction;
 
 public class SkyblockFlimFlam implements IFlimFlamAction {
@@ -31,7 +31,7 @@ public class SkyblockFlimFlam implements IFlimFlamAction {
 			if (!world.isAirBlock(coordX + d.offsetX, coordY + d.offsetY, coordZ + d.offsetZ)) return false;
 
 		for (ForgeDirection d : BUILD)
-			world.setBlock(coordX + d.offsetX, coordY + d.offsetY, coordZ + d.offsetZ, Block.ice.blockID);
+			world.setBlock(coordX + d.offsetX, coordY + d.offsetY, coordZ + d.offsetZ, Blocks.ice);
 
 		target.setPositionAndUpdate(coordX + 0.5, coordY + 1, coordZ + 0.5);
 		return true;

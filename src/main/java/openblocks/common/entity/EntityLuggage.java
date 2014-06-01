@@ -1,6 +1,7 @@
 package openblocks.common.entity;
 
-import net.minecraft.entity.Entity;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.ai.EntityAIFollowOwner;
 import net.minecraft.entity.ai.EntityAISwimming;
@@ -19,8 +20,6 @@ import openmods.utils.BlockUtils;
 import openmods.utils.InventoryUtils;
 
 import com.google.common.base.Strings;
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
 
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
@@ -43,7 +42,7 @@ public class EntityLuggage extends EntityTameable implements IInventoryProvider,
 		this.tasks.addTask(1, new EntityAISwimming(this));
 		this.tasks.addTask(2, new EntityAIFollowOwner(this, getAIMoveSpeed(), 10.0F, 2.0F));
 		this.tasks.addTask(3, new EntityAICollectItem(this));
-		this.dataWatcher.addObject(18, Integer.valueOf(inventory.getSizeInventory())); // inventory
+		this.dataWatcher.addObject(18, inventory.getSizeInventory()); // inventory
 	}
 
 	public void setSpecial() {
@@ -52,7 +51,7 @@ public class EntityLuggage extends EntityTameable implements IInventoryProvider,
 		GenericInventory inventory = new GenericInventory("luggage", false, 54);
 		inventory.copyFrom(this.inventory);
 		if (this.dataWatcher != null) {
-			this.dataWatcher.updateObject(18, Integer.valueOf(inventory.getSizeInventory()));
+			this.dataWatcher.updateObject(18, inventory.getSizeInventory());
 		}
 		this.inventory = inventory;
 	}
@@ -99,12 +98,12 @@ public class EntityLuggage extends EntityTameable implements IInventoryProvider,
 				luggageItem.setTagCompound(tag);
 
 				String nameTag = getCustomNameTag();
-				if (!Strings.isNullOrEmpty(nameTag)) luggageItem.setItemName(nameTag);
+				if (!Strings.isNullOrEmpty(nameTag)) luggageItem.setStackDisplayName(nameTag);
 
 				BlockUtils.dropItemStackInWorld(worldObj, posX, posY, posZ, luggageItem);
 				setDead();
 			} else {
-				player.openGui(OpenBlocks.instance, OpenBlocksGuiHandler.GuiId.luggage.ordinal(), player.worldObj, entityId, 0, 0);
+				player.openGui(OpenBlocks.instance, OpenBlocksGuiHandler.GuiId.luggage.ordinal(), player.worldObj, getEntityId(), 0, 0);
 			}
 		}
 		return true;
@@ -115,8 +114,9 @@ public class EntityLuggage extends EntityTameable implements IInventoryProvider,
 	}
 
 	@Override
-	protected void playStepSound(int par1, int par2, int par3, int par4) {
-		playSound("openblocks:feet", 0.3F, 0.7F + (worldObj.rand.nextFloat() * 0.5f));
+	// TODO Obfuscated method protected void playStepSound(int par1, int par2, int par3, int par4) {
+  protected void func_145780_a(int p_145780_1_, int p_145780_2_, int p_145780_3_, Block p_145780_4_) {
+    playSound("openblocks:feet", 0.3F, 0.7F + (worldObj.rand.nextFloat() * 0.5f));
 	}
 
 	@Override
@@ -149,12 +149,12 @@ public class EntityLuggage extends EntityTameable implements IInventoryProvider,
 	}
 
 	@Override
-	public void writeSpawnData(ByteArrayDataOutput data) {
+	public void writeSpawnData(ByteBuf data) {
 		data.writeInt(inventory.getSizeInventory());
 	}
 
 	@Override
-	public void readSpawnData(ByteArrayDataInput data) {
+	public void readSpawnData(ByteBuf data) {
 		inventory = new GenericInventory("luggage", false, data.readInt());
 	}
 
@@ -163,8 +163,4 @@ public class EntityLuggage extends EntityTameable implements IInventoryProvider,
 		return 0.825;
 	}
 
-	@Override
-	public Entity getOwner() {
-		return func_130012_q();
-	}
 }

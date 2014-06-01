@@ -5,8 +5,10 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent;
@@ -29,7 +31,7 @@ public class EntityAIBreakBlock extends EntityAIBase {
 		this.entity = minime;
 		this.pathFinder = minime.getNavigator();
 		setMutexBits(3);
-		rand = new Random(minime.entityId);
+		rand = new Random(minime.getEntityId());
 		tickOffset = rand.nextInt(10);
 	}
 
@@ -82,7 +84,8 @@ public class EntityAIBreakBlock extends EntityAIBase {
 		if (!world.isRemote && blockCoord != null && canHarvestBlock(blockCoord)) {
 			if (entity.getDistance(0.5 + blockCoord.x, 0.5 + blockCoord.y, 0.5 + blockCoord.z) < 1.0) {
 
-				FakePlayerPool.instance.executeOnPlayer(world, new PlayerUser() {
+        // TODO: Not sure if this cast is safe
+				FakePlayerPool.instance.executeOnPlayer((WorldServer) world, new PlayerUser() {
 					@Override
 					public void usePlayer(OpenModsFakePlayer fakePlayer) {
 						fakePlayer.inventory.currentItem = 0;
@@ -119,6 +122,6 @@ public class EntityAIBreakBlock extends EntityAIBase {
 
 	public boolean canHarvestBlock(Coord coord) {
 		return BlockProperties.isFlower(coord, entity.worldObj) ||
-				BlockProperties.getBlock(coord, entity.worldObj) == Block.torchWood;
+				BlockProperties.getBlock(coord, entity.worldObj) == Blocks.torch;
 	}
 }

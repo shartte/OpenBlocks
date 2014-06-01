@@ -3,17 +3,19 @@ package openblocks.enchantments;
 import java.util.*;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
-import net.minecraftforge.event.ForgeSubscribe;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -105,7 +107,7 @@ public class ExplosiveEnchantmentsHandler {
 
 	private Map<Entity, JumpInfo> jumpBoosts = new MapMaker().weakKeys().makeMap();
 
-	private static final ItemStack gunpowder = new ItemStack(Item.gunpowder);
+	private static final ItemStack gunpowder = new ItemStack(Items.gunpowder);
 
 	private static void useItems(EntityPlayer player, int gunpowderSlot, int armorSlot, int gunpowderAmout) {
 		if (player.capabilities.isCreativeMode) return;
@@ -154,7 +156,7 @@ public class ExplosiveEnchantmentsHandler {
 		return null;
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onFall(LivingFallEvent evt) {
 		final Entity e = evt.entityLiving;
 		if (evt.distance > 4 && !e.isSneaking() && e instanceof EntityPlayer) {
@@ -171,19 +173,22 @@ public class ExplosiveEnchantmentsHandler {
 				// Loved By Everyone...
 				// Possibly Buggy
 				// TEEERRRRRIIIIBLE HAAAAAACK!
-				Minecraft.getMinecraft().gameSettings.keyBindJump.pressed = true;
+        KeyBinding jumpBinding = Minecraft.getMinecraft().gameSettings.keyBindJump;
+        KeyBinding.setKeyBindState(jumpBinding.getKeyCode(), true);
+        KeyBinding.onTick(jumpBinding.getKeyCode());
 				// no, seriously, can't find better way to make jump
 				jumpBoosts.put(player, boost);
 			} else if (e instanceof EntityPlayerMP) {
 				EntityPlayerMP serverPlayer = (EntityPlayerMP)player;
-				serverPlayer.playerNetServerHandler.ticksForFloatKick = 0;
+				// TODO: This is currently not accessible
+				// serverPlayer.playerNetServerHandler.floatingTickCount = 0;
 			} else return;
 
 			evt.setCanceled(true);
 		}
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onJump(LivingJumpEvent e) {
 		final Entity entity = e.entity;
 		JumpInfo boost = jumpBoosts.remove(entity);
@@ -191,8 +196,9 @@ public class ExplosiveEnchantmentsHandler {
 			boost.modifyVelocity(entity);
 
 			if (OpenMods.proxy.isClientPlayer(entity)) {
-				Minecraft.getMinecraft().gameSettings.keyBindJump.pressed = false;
-			}
+        KeyBinding jumpBinding = Minecraft.getMinecraft().gameSettings.keyBindJump;
+        KeyBinding.setKeyBindState(jumpBinding.getKeyCode(), false);
+      }
 		}
 	}
 
@@ -200,7 +206,7 @@ public class ExplosiveEnchantmentsHandler {
 		return source instanceof EntityDamageSource && ALLOWED_DAMAGE_SOURCE.contains(source.damageType);
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onDamage(LivingAttackEvent e) {
 		final Entity victim = e.entity;
 		if (victim instanceof EntityPlayerMP && checkSource(e.source)) {

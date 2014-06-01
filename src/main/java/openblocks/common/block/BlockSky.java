@@ -1,10 +1,10 @@
 package openblocks.common.block;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
-import openblocks.Config;
 import openmods.utils.BlockNotifyFlags;
 import openmods.utils.render.RenderUtils;
 import cpw.mods.fml.relauncher.Side;
@@ -13,7 +13,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class BlockSky extends OpenBlock {
 
 	public BlockSky() {
-		super(Config.blockSkyId, Material.iron);
+		super(Material.iron);
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class BlockSky extends OpenBlock {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister registry) {
+	public void registerBlockIcons(IIconRegister registry) {
 		blockIcon = registry.registerIcon("openblocks:sky_inactive");
 	}
 
@@ -45,7 +45,7 @@ public class BlockSky extends OpenBlock {
 	}
 
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
 		int meta = world.getBlockMetadata(x, y, z);
 		int isPowered = world.isBlockIndirectlyGettingPowered(x, y, z)? 2 : 0;
 		int isInverted = meta & 1;

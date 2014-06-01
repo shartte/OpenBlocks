@@ -6,7 +6,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Vec3;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.client.gui.GuiBlockPlacer;
 import openblocks.common.container.ContainerBlockPlacer;
 import openmods.GenericInventory;
@@ -55,21 +56,22 @@ public class TileEntityBlockPlacer extends OpenTileEntity implements INeighbourA
 	}
 
 	private void placeBlock(final ForgeDirection direction, final int x, final int y, final int z, final int slotId, final ItemStack stack) {
-		FakePlayerPool.instance.executeOnPlayer(worldObj, new PlayerUser() {
+    // TODO Unclear whether casting to WorldServer is okay here
+		FakePlayerPool.instance.executeOnPlayer((WorldServer) worldObj, new PlayerUser() {
 			@Override
 			public void usePlayer(OpenModsFakePlayer fakePlayer) {
 				ItemStack newStack = fakePlayer.equipWithAndRightClick(stack,
 						Vec3.createVectorHelper(xCoord, yCoord, zCoord),
 						Vec3.createVectorHelper(x, y - 1, z),
 						direction.getOpposite(),
-						worldObj.blockExists(x, y, z) && !worldObj.isAirBlock(x, y, z) && !Block.blocksList[worldObj.getBlockId(x, y, z)].isBlockReplaceable(worldObj, x, y, z));
+						worldObj.blockExists(x, y, z) && !worldObj.isAirBlock(x, y, z) && !worldObj.getBlock(x, y, z).isReplaceable(worldObj, x, y, z));
 				inventory.setInventorySlotContents(slotId, newStack);
 			}
 		});
 	}
 
 	@Override
-	public void onNeighbourChanged(int blockId) {
+	public void onNeighbourChanged(Block block) {
 		if (!worldObj.isRemote) {
 			setRedstoneSignal(worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord));
 		}

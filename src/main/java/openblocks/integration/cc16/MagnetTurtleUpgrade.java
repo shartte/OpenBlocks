@@ -1,10 +1,10 @@
 package openblocks.integration.cc16;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.event.ForgeSubscribe;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import openblocks.client.Icons;
 import openblocks.common.item.MetasGeneric;
 import openblocks.integration.TurtleIds;
@@ -14,7 +14,7 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.*;
 
 public class MagnetTurtleUpgrade implements ITurtleUpgrade {
-	public Icon icon;
+	public IIcon icon;
 
 	@Override
 	public int getUpgradeID() {
@@ -47,11 +47,11 @@ public class MagnetTurtleUpgrade implements ITurtleUpgrade {
 	}
 
 	@Override
-	public Icon getIcon(ITurtleAccess turtle, TurtleSide side) {
+	public IIcon getIcon(ITurtleAccess turtle, TurtleSide side) {
 		return icon;
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void registerIcons(TextureStitchEvent evt) {
 		if (evt.map.getTextureType() == Icons.ICON_TYPE_BLOCK) icon = evt.map.registerIcon("openblocks:magnet_upgrade");
 	}

@@ -2,14 +2,14 @@ package openblocks.common.item;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import openblocks.Config;
 import openblocks.OpenBlocks;
@@ -28,10 +28,10 @@ public class ItemPaintBrush extends Item {
 
 	public static final int MAX_USES = 24;
 
-	public Icon paintIcon;
+	public IIcon paintIcon;
 
 	public ItemPaintBrush() {
-		super(Config.itemPaintBrushId);
+
 		setCreativeTab(OpenBlocks.tabOpenBlocks);
 		setMaxStackSize(1);
 		setMaxDamage(MAX_USES); // Damage dealt in Canvas block
@@ -52,14 +52,14 @@ public class ItemPaintBrush extends Item {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister registry) {
+	public void registerIcons(IIconRegister registry) {
 		itemIcon = registry.registerIcon("openblocks:paintbrush");
 		paintIcon = registry.registerIcon("openblocks:paintbrush_paint");
 	}
 
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void getSubItems(int id, CreativeTabs par2CreativeTabs, List list) {
+	public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List list) {
 		list.add(new ItemStack(this));
 		for (ColorMeta color : ColorUtils.getAllColors()) {
 			list.add(createStackWithColor(color.rgb));
@@ -82,7 +82,7 @@ public class ItemPaintBrush extends Item {
 			BlockCanvas.replaceBlock(world, x, y, z);
 		}
 
-		TileEntity te = world.getBlockTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(x, y, z);
 
 		if (te instanceof TileEntityCanvas) {
 			TileEntityCanvas canvas = (TileEntityCanvas)te;
@@ -114,7 +114,7 @@ public class ItemPaintBrush extends Item {
 	}
 
 	@Override
-	public Icon getIconFromDamageForRenderPass(int dmg, int pass) {
+	public IIcon getIconFromDamageForRenderPass(int dmg, int pass) {
 		return pass == 1? paintIcon : getIconFromDamage(dmg);
 	}
 

@@ -12,7 +12,7 @@ public class BlockRenderingHandler extends BlockRenderingHandlerBase {
 		addRenderer(OpenBlocks.Blocks.canvas, canvasRenderer);
 		addRenderer(OpenBlocks.Blocks.canvasGlass, canvasRenderer);
 		addRenderer(OpenBlocks.Blocks.paintCan, new BlockPaintCanRenderer());
-		addRenderer(OpenBlocks.Blocks.radio, new BlockRadioRenderer());
+//		addRenderer(OpenBlocks.Blocks.radio, new BlockRadioRenderer()); TODO PORT RADIO
 		addRenderer(OpenBlocks.Blocks.sky, new BlockSkyRenderer());
 	}
 

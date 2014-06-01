@@ -7,6 +7,7 @@ import java.io.IOException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
+import net.minecraftforge.common.util.Constants;
 import openmods.utils.ByteUtils;
 
 public class HeightMapData extends WorldSavedData {
@@ -102,11 +103,11 @@ public class HeightMapData extends WorldSavedData {
 
 		scale = tag.getByte("Scale");
 
-		NBTTagList layersData = tag.getTagList("Layers");
+		NBTTagList layersData = tag.getTagList("Layers", Constants.NBT.TAG_COMPOUND);
 		int length = layersData.tagCount();
 		layers = new LayerData[length];
 		for (int i = 0; i < length; i++) {
-			NBTTagCompound layerData = (NBTTagCompound)layersData.tagAt(i);
+			NBTTagCompound layerData = layersData.getCompoundTagAt(i);
 			LayerData layer = new LayerData();
 			layer.readFromNBT(layerData);
 			layers[i] = layer;

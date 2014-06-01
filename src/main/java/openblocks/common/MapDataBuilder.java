@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -36,13 +37,10 @@ public class MapDataBuilder {
 		public int liquidHeight;
 
 		private static Block getValidBlock(Chunk chunk, int x, int y, int z) {
-			int blockId = chunk.getBlockID(x, y, z);
-			if (blockId == 0) return null;
+			Block block = chunk.getBlock(x, y, z);
+			if (block == Blocks.air) return null;
 
-			Block block = Block.blocksList[blockId];
-			if (block == null) return null;
-
-			if (block.blockMaterial.materialMapColor.colorIndex == 0) return null;
+			if (block.getMaterial().getMaterialMapColor().colorIndex == 0) return null;
 
 			if (MapDataManager.instance.isBlockTransparent(block)) return null;
 
@@ -69,7 +67,7 @@ public class MapDataBuilder {
 						Block block = getValidBlock(chunk, x, y, z);
 						if (block == null) continue;
 
-						if (block.blockMaterial.isLiquid()) {
+						if (block.getMaterial().isLiquid()) {
 							if (blockLiquid == null) {
 								blockLiquid = block;
 								heightLiquid = y;
@@ -83,13 +81,13 @@ public class MapDataBuilder {
 
 					if (blockSolid != null) {
 						groundHeightSum += heightSolid;
-						int color = blockSolid.blockMaterial.materialMapColor.colorIndex;
+						int color = blockSolid.getMaterial().getMaterialMapColor().colorIndex;
 						groundColors[color]++;
 					}
 
 					if (blockLiquid != null) {
 						liquidHeightSum += heightLiquid;
-						int color = blockLiquid.blockMaterial.materialMapColor.colorIndex;
+						int color = blockLiquid.getMaterial().getMaterialMapColor().colorIndex;
 						liquidColors[color]++;
 						liquidCount++;
 					}

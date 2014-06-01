@@ -9,8 +9,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec3Pool;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import openblocks.Config;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.common.tileentity.TileEntityTarget;
 
 public class BlockTarget extends OpenBlock {
@@ -18,8 +17,8 @@ public class BlockTarget extends OpenBlock {
 	private int lastEntityHit = 0;
 
 	public BlockTarget() {
-		super(Config.blockTargetId, Material.rock);
-		setLightValue(0.3f);
+		super(Material.rock);
+		setLightLevel(0.3f);
 		setRotationMode(BlockRotationMode.FOUR_DIRECTIONS);
 	}
 
@@ -37,11 +36,11 @@ public class BlockTarget extends OpenBlock {
 	public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
 
 		if (!world.isRemote && entity != null && entity instanceof EntityArrow) {
-			if (lastEntityHit != entity.entityId) {
-				lastEntityHit = entity.entityId;
+			if (lastEntityHit != entity.getEntityId()) {
+				lastEntityHit = entity.getEntityId();
 				return;
 			}
-			lastEntityHit = entity.entityId;
+			lastEntityHit = entity.getEntityId();
 			onTargetHit(world, x, y, z, world.getWorldVec3Pool().getVecFromPool(entity.posX, entity.posY, entity.posZ));
 		}
 	}
@@ -50,7 +49,7 @@ public class BlockTarget extends OpenBlock {
 
 		if (world.isRemote) { return; }
 
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(x, y, z);
 
 		if (tile == null || !(tile instanceof TileEntityTarget)) { return; }
 
@@ -92,7 +91,7 @@ public class BlockTarget extends OpenBlock {
 
 	@Override
 	public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int m) {
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(x, y, z);
 		if ((tile != null) && ((tile instanceof TileEntityTarget))) { return ((TileEntityTarget)tile).getStrength(); }
 		return 0;
 	}
@@ -117,7 +116,7 @@ public class BlockTarget extends OpenBlock {
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
 
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(x, y, z);
 
 		if (tile == null || !(tile instanceof TileEntityTarget)) { return; }
 

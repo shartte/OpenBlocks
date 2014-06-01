@@ -31,7 +31,7 @@ public class BlockElevator extends OpenBlock {
 	};
 
 	public BlockElevator() {
-		super(Config.blockElevatorId, Material.rock);
+		super(Material.rock);
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class BlockElevator extends OpenBlock {
 				if (dmg == 15) dmg = 0;
 				else if (dmg == 0) dmg = 15;
 				world.setBlockMetadataWithNotify(x, y, z, dmg, BlockNotifyFlags.ALL);
-				world.markBlockForRenderUpdate(x, y, z);
+				world.markBlockForUpdate(x, y, z);
 				return true;
 			}
 		}

@@ -3,7 +3,6 @@ package openblocks;
 import java.io.File;
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
@@ -11,11 +10,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatBasic;
-import net.minecraftforge.common.Configuration;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fluids.*;
 import openblocks.api.FlimFlamRegistry;
-import openblocks.client.radio.RadioManager;
 import openblocks.common.*;
 import openblocks.common.block.*;
 import openblocks.common.entity.*;
@@ -49,16 +49,13 @@ import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
-import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.common.registry.VillagerRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(modid = OpenBlocks.ID, name = OpenBlocks.NAME, version = OpenBlocks.VERSION, dependencies = OpenBlocks.DEPENDENCIES)
-@NetworkMod(serverSideRequired = true, clientSideRequired = true)
 public class OpenBlocks {
 	public static final String ID = "OpenBlocks";
 	public static final String NAME = "OpenBlocks";
@@ -187,8 +184,8 @@ public class OpenBlocks {
 		@RegisterBlock(name = "drawingtable", tileEntity = TileEntityDrawingTable.class)
 		public static BlockDrawingTable drawingTable;
 
-		@RegisterBlock(name = "radio", tileEntity = TileEntityRadio.class)
-		public static BlockRadio radio;
+//		@RegisterBlock(name = "radio", tileEntity = TileEntityRadio.class)
+//		public static BlockRadio radio; TODO PORT RADIO
 
 		@RegisterBlock(name = "sky", tileEntity = TileEntitySky.class, itemBlock = ItemSkyBlock.class)
 		public static BlockSky sky;
@@ -275,8 +272,8 @@ public class OpenBlocks {
 		@RegisterItem(name = "cursor")
 		public static ItemCursor cursor;
 
-		@RegisterItem(name = "tunedCrystal", unlocalizedName = "tuned_crystal")
-		public static ItemTunedCrystal tunedCrystal;
+//		@RegisterItem(name = "tunedCrystal", unlocalizedName = "tuned_crystal") TODO PORT RADIO
+//		public static ItemTunedCrystal tunedCrystal;
 
 		@RegisterItem(name = "infoBook", unlocalizedName = "info_book")
 		public static ItemInfoBook infoBook;
@@ -312,12 +309,13 @@ public class OpenBlocks {
 	public static FluidStack XP_FLUID = null;
 
 	public static CreativeTabs tabOpenBlocks = new CreativeTabs("tabOpenBlocks") {
-		@Override
-		public ItemStack getIconItemStack() {
-			return new ItemStack(ObjectUtils.firstNonNull(OpenBlocks.Blocks.flag, Block.sponge), 1, 0);
-		}
 
-		@Override
+    @Override
+    public Item getTabIconItem() {
+      return Item.getItemFromBlock(ObjectUtils.firstNonNull(OpenBlocks.Blocks.flag, Blocks.sponge));
+    }
+
+    @Override
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		@SideOnly(Side.CLIENT)
 		public void displayAllReleventItems(List result) {
@@ -331,9 +329,15 @@ public class OpenBlocks {
 
 	public static int renderId;
 
-	public static final Achievement brickAchievement = new Achievement(70997, "openblocks.droppedBrick", 13, 13, Item.brick, null).registerAchievement();
+  // TODO: Replaced the achieve-id (int) with a placeholder
+	public static final Achievement brickAchievement = new Achievement("openblocks.droppedBrick",
+      "openblocks.droppedBrick", 13, 13, net.minecraft.init.Items.brick, null).registerStat();
 
-	public static final StatBase brickStat = (new StatBasic(70998, "stat.openblocks.bricksDropped")).registerStat();
+  // Create new achievement page
+  public static AchievementPage openBlocksPage = new AchievementPage("OpenBlocks", brickAchievement);
+
+  // TODO: Replaced the stat-id (int) with a placeholder
+	public static final StatBase brickStat = new StatBasic("stat.openblocks.bricksDropped", new ChatComponentTranslation("stat.openblocks.bricksDropped")).registerStat();
 
 	public static ItemStack changeLog;
 
@@ -346,20 +350,20 @@ public class OpenBlocks {
 
 		if (config.hasChanged()) config.save();
 
-		RadioManager.instance.readConfigs();
-		Config.register();
+//		RadioManager.instance.readConfigs(); TODO PORT RADIO
+		Config.registerBlocksAndItems();
 
-		NetworkRegistry.instance().registerGuiHandler(instance, OpenMods.proxy.wrapHandler(new OpenBlocksGuiHandler()));
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, OpenMods.proxy.wrapHandler(new OpenBlocksGuiHandler()));
 
-		if (Config.blockGraveId > 0) {
+		if (Config.blockGraveEnabled) {
 			MinecraftForge.EVENT_BUS.register(new PlayerDeathHandler());
 		}
 
-		if (Config.itemCursorId > 0) {
+		if (Config.itemCursorEnabled) {
 			MinecraftForge.EVENT_BUS.register(new GuiOpenHandler());
 		}
 
-		if (Config.itemLuggageId > 0) {
+		if (Config.itemLuggageEnabled) {
 			EntityRegistry.registerModEntity(EntityLuggage.class, "Luggage", ENTITY_LUGGAGE_ID, OpenBlocks.instance, 64, 1, true);
 		}
 
@@ -367,23 +371,23 @@ public class OpenBlocks {
 
 		EntityRegistry.registerModEntity(EntityHangGlider.class, "Hang Glider", ENTITY_HANGGLIDER_ID, OpenBlocks.instance, 64, 1, true);
 
-		if (Config.itemCraneId > 0) {
+		if (Config.itemCraneEnabled) {
 			EntityRegistry.registerModEntity(EntityMagnet.class, "Magnet", ENTITY_MAGNET_ID, OpenBlocks.instance, 64, 1, true);
 			EntityRegistry.registerModEntity(EntityBlock.class, "Block", ENTITY_BLOCK_ID, OpenBlocks.instance, 64, 1, true);
 			EntityRegistry.registerModEntity(EntityMagnet.PlayerBound.class, "Player-Magnet", ENTITY_MAGNET_PLAYER_ID, OpenBlocks.instance, 64, 1, true);
 		}
 
-		if (Config.itemCartographerId > 0) {
+		if (Config.itemCartographerEnabled) {
 			EntityRegistry.registerModEntity(EntityCartographer.class, "Cartographer", ENTITY_CARTOGRAPHER_ID, OpenBlocks.instance, 64, 8, true);
 		}
 
 		EntityRegistry.registerModEntity(EntityItemProjectile.class, "EntityItemProjectile", ENTITY_CANON_ITEM_ID, OpenBlocks.instance, 64, 1, true);
 
-		if (Config.itemGoldenEyeId > 0) {
+		if (Config.itemGoldenEyeEnabled) {
 			EntityRegistry.registerModEntity(EntityGoldenEye.class, "GoldenEye", ENTITY_GOLDEN_EYE_ID, OpenBlocks.instance, 64, 8, true);
 		}
 
-		if (Config.blockGoldenEggId > 0) {
+		if (Config.blockGoldenEggEnabled) {
 			EntityRegistry.registerModEntity(EntityMiniMe.class, "MiniMe", ENTITY_MINIME_ID, OpenBlocks.instance, 64, 1, true);
 		}
 
@@ -409,25 +413,29 @@ public class OpenBlocks {
 			MinecraftForge.EVENT_BUS.register(new BrickManager());
 		}
 
-		if (Config.blockElevatorId > 0) {
+		if (Config.blockElevatorEnabled) {
 			MinecraftForge.EVENT_BUS.register(ElevatorBlockRules.instance);
 		}
 
 		if (Config.radioVillagerId > 0) {
 			VillagerRegistry.instance().registerVillagerId(Config.radioVillagerId);
-			VillagerRegistry.instance().registerVillageTradeHandler(Config.radioVillagerId, RadioManager.instance);
+//			VillagerRegistry.instance().registerVillageTradeHandler(Config.radioVillagerId, RadioManager.instance); TODO PORT RADIO
 		}
 
 		FMLInterModComms.sendMessage("NotEnoughCodecs", "listCodecs", "");
 
 		MinecraftForge.EVENT_BUS.register(PlayerInventoryStore.instance);
 
+    AchievementPage.registerAchievementPage(openBlocksPage);
+
 		proxy.preInit();
 	}
 
 	@EventHandler
 	public void init(FMLInitializationEvent evt) {
-		TickRegistry.registerTickHandler(new ServerTickHandler(), Side.SERVER);
+    if (evt.getSide() == Side.SERVER) {
+      FMLCommonHandler.instance().bus().register(new ServerTickHandler());
+    }
 		proxy.init();
 		proxy.registerRenderInformation();
 	}
@@ -472,7 +480,7 @@ public class OpenBlocks {
 
 			if (m.isNBTMessage() && "knownCodecs".equalsIgnoreCase(m.key)) {
 				Log.info("Updating codec list with message from %s", m.getSender());
-				RadioManager.addCodecsInfo(m.getNBTValue());
+//				RadioManager.addCodecsInfo(m.getNBTValue());TODO PORT RADIO
 			}
 		}
 	}

@@ -1,10 +1,12 @@
 package openblocks.common.tileentity;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.client.gui.GuiItemDropper;
 import openblocks.common.container.ContainerItemDropper;
 import openmods.GenericInventory;
@@ -48,7 +50,8 @@ public class TileEntityItemDropper extends OpenTileEntity implements INeighbourA
 			if (stack.stackSize <= 0) {
 				inventory.setInventorySlotContents(i, null);
 			} else {
-				FakePlayerPool.instance.executeOnPlayer(worldObj, new PlayerUser() {
+        // TODO: Unclear whether we can safely cast to WorldServer here
+				FakePlayerPool.instance.executeOnPlayer((WorldServer) worldObj, new PlayerUser() {
 					@Override
 					public void usePlayer(OpenModsFakePlayer fakePlayer) {
 						fakePlayer.dropItemAt(dropped, xCoord, yCoord, zCoord, ForgeDirection.DOWN);
@@ -61,7 +64,7 @@ public class TileEntityItemDropper extends OpenTileEntity implements INeighbourA
 	}
 
 	@Override
-	public void onNeighbourChanged(int blockId) {
+	public void onNeighbourChanged(Block block) {
 		if (!worldObj.isRemote) {
 			setRedstoneSignal(worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord));
 		}

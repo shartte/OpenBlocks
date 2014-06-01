@@ -2,13 +2,13 @@ package openblocks.common.block;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.Config;
 
 public class BlockFan extends OpenBlock {
 
 	public BlockFan() {
-		super(Config.blockFanId, Material.circuits);
+		super(Material.circuits);
 		setBlockBounds(0.2f, 0, 0.2f, 0.8f, 1.0f, 0.8f);
 		/* No rotation, handled by TE */
 	}

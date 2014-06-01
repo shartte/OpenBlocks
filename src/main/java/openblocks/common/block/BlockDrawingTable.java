@@ -1,19 +1,19 @@
 package openblocks.common.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.Config;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockDrawingTable extends OpenBlock {
 
-	Icon topIcon, frontIcon;
+	IIcon topIcon, frontIcon;
 
 	public BlockDrawingTable() {
-		super(Config.blockDrawingTable, Material.wood);
+		super(Material.wood);
 		setRotationMode(BlockRotationMode.FOUR_DIRECTIONS);
 	}
 
@@ -24,8 +24,8 @@ public class BlockDrawingTable extends OpenBlock {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister registry) {
-		super.registerIcons(registry);
+	public void registerBlockIcons(IIconRegister registry) {
+		super.registerBlockIcons(registry);
 		this.topIcon = registry.registerIcon("openblocks:drawingtable_top");
 		this.frontIcon = registry.registerIcon("openblocks:drawingtable_front");
 		setTexture(ForgeDirection.UP, topIcon);

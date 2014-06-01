@@ -1,23 +1,23 @@
 package openblocks.common.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.Config;
 import openblocks.common.tileentity.TileEntityDigitalFuse;
 
 public class BlockDigitalFuse extends OpenBlock {
 
 	public static class Icons {
-		public static Icon[] topIcons = new Icon[8];
-		public static Icon side;
+		public static IIcon[] topIcons = new IIcon[8];
+		public static IIcon side;
 	}
 
 	public BlockDigitalFuse() {
-		super(Config.blockDigitalFuseId, Material.circuits);
+		super(Material.circuits);
 		setRotationMode(BlockRotationMode.FOUR_DIRECTIONS);
 		setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.125F, 1.0F);
 	}
@@ -28,7 +28,7 @@ public class BlockDigitalFuse extends OpenBlock {
 	}
 
 	@Override
-	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) {
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 		return true;
 	}
 
@@ -58,7 +58,7 @@ public class BlockDigitalFuse extends OpenBlock {
 	}
 
 	@Override
-	public void registerIcons(IconRegister registry) {
+	public void registerBlockIcons(IIconRegister registry) {
 		for (int i = 0; i < 8; i++) {
 			Icons.topIcons[i] = registry.registerIcon("openblocks:digitalfuse_" + i);
 		}
@@ -73,7 +73,7 @@ public class BlockDigitalFuse extends OpenBlock {
 	}
 
 	@Override
-	public Icon getUnrotatedTexture(ForgeDirection direction, IBlockAccess world, int x, int y, int z) {
+	public IIcon getUnrotatedTexture(ForgeDirection direction, IBlockAccess world, int x, int y, int z) {
 		if (direction.equals(ForgeDirection.UP)) {
 
 			TileEntityDigitalFuse tile = getTileEntity(world, x, y, z, TileEntityDigitalFuse.class);

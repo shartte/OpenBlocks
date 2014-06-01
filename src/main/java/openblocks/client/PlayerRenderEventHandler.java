@@ -1,13 +1,13 @@
 package openblocks.client;
 
 import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.event.ForgeSubscribe;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import openblocks.OpenBlocks;
 import openblocks.common.item.ItemSleepingBag;
 
 public class PlayerRenderEventHandler {
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onPrePlayerRender(RenderPlayerEvent.Pre event) {
 		if (event.entityPlayer != null) {
 			if (OpenBlocks.Items.sleepingBag != null) {

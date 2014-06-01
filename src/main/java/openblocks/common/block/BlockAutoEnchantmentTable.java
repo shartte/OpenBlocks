@@ -2,23 +2,23 @@ package openblocks.common.block;
 
 import java.util.Random;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import openblocks.Config;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockAutoEnchantmentTable extends OpenBlock {
 
-	private Icon iconTop;
-	private Icon iconBottom;
+	private IIcon iconTop;
+	private IIcon iconBottom;
 
 	public BlockAutoEnchantmentTable() {
-		super(Config.blockAutoEnchantmentTableId, Material.rock);
+		super(Material.rock);
 		setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.75F, 1.0F);
 	}
 
@@ -45,7 +45,7 @@ public class BlockAutoEnchantmentTable extends OpenBlock {
 
 				if (rand.nextInt(16) == 0) {
 					for (int j1 = y; j1 <= y + 1; ++j1) {
-						if (world.getBlockId(l, j1, i1) == Block.bookShelf.blockID) {
+						if (world.getBlock(l, j1, i1) == Blocks.bookshelf) {
 							if (!world.isAirBlock((l - x) / 2 + x, j1, (i1 - z)
 									/ 2 + z)) {
 								break;
@@ -63,19 +63,19 @@ public class BlockAutoEnchantmentTable extends OpenBlock {
 	}
 
 	@Override
-	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) {
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 		return false;
 	}
 
 	@Override
-	public void registerIcons(IconRegister registry) {
-		super.registerIcons(registry);
+	public void registerBlockIcons(IIconRegister registry) {
+		super.registerBlockIcons(registry);
 		iconTop = registry.registerIcon("openblocks:autoenchantmenttable_top");
 		iconBottom = registry.registerIcon("openblocks:autoenchantmenttable_bottom");
 	}
 
 	@Override
-	public Icon getIcon(int side, int meta) {
+	public IIcon getIcon(int side, int meta) {
 		return side == 0? iconBottom : side == 1? iconTop : this.blockIcon;
 	}
 

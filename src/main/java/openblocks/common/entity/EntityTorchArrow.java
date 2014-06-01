@@ -2,9 +2,10 @@ package openblocks.common.entity;
 
 import java.lang.reflect.Field;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import openmods.Log;
 
@@ -46,9 +47,9 @@ public class EntityTorchArrow extends EntityArrow {
 				if (shootingEntity != null
 						&& shootingEntity instanceof EntityPlayer) {
 					EntityPlayer player = (EntityPlayer)shootingEntity;
-					if (player.inventory.hasItem(Block.torchWood.blockID)) {
-						player.inventory.consumeInventoryItem(Block.torchWood.blockID);
-						worldObj.setBlock(closestX, closestY, closestZ, Block.torchWood.blockID);
+					if (player.inventory.hasItem(Item.getItemFromBlock(Blocks.torch))) {
+						player.inventory.consumeInventoryItem(Item.getItemFromBlock(Blocks.torch));
+						worldObj.setBlock(closestX, closestY, closestZ, Blocks.torch);
 						setDead();
 					}
 				}

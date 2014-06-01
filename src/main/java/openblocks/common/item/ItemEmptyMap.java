@@ -2,7 +2,7 @@ package openblocks.common.item;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -23,7 +23,7 @@ public class ItemEmptyMap extends Item {
 	public static final int MAX_SCALE = 4;
 
 	public ItemEmptyMap() {
-		super(Config.itemEmptyMap);
+
 		setCreativeTab(OpenBlocks.tabOpenBlocks);
 	}
 
@@ -45,7 +45,7 @@ public class ItemEmptyMap extends Item {
 	@Override
 	@SideOnly(Side.CLIENT)
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void getSubItems(int id, CreativeTabs tab, List result) {
+	public void getSubItems(Item id, CreativeTabs tab, List result) {
 		for (int scale = 0; scale < ItemEmptyMap.MAX_SCALE; scale++)
 			result.add(OpenBlocks.Items.emptyMap.createMap(scale));
 	}
@@ -60,7 +60,7 @@ public class ItemEmptyMap extends Item {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister registry) {
+	public void registerIcons(IIconRegister registry) {
 		itemIcon = registry.registerIcon("openblocks:empty_map");
 	}
 }

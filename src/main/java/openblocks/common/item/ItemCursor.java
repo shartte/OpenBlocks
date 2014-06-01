@@ -1,7 +1,7 @@
 package openblocks.common.item;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -17,14 +17,14 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ItemCursor extends Item {
 
 	public ItemCursor() {
-		super(Config.itemCursorId);
+
 		setCreativeTab(OpenBlocks.tabOpenBlocks);
 		setMaxStackSize(1);
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister registry) {
+	public void registerIcons(IIconRegister registry) {
 		itemIcon = registry.registerIcon("openblocks:cursor");
 	}
 
@@ -61,8 +61,7 @@ public class ItemCursor extends Item {
 	}
 
 	private static void clickBlock(World world, EntityPlayer player, final int x, final int y, final int z, int side) {
-		int blockId = world.getBlockId(x, y, z);
-		Block block = Block.blocksList[blockId];
+		Block block = world.getBlock(x, y, z);
 		if (block != null) {
 			if (player.capabilities.isCreativeMode) block.onBlockActivated(world, x, y, z, player, side, 0, 0, 0);
 			else {

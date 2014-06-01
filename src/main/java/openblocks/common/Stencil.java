@@ -1,7 +1,7 @@
 package openblocks.common;
 
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -23,8 +23,8 @@ public enum Stencil {
 	MUSIC("music"),
 	BALLOON("balloon");
 
-	private Icon blockIcon;
-	private Icon coverBlockIcon;
+	private IIcon blockIcon;
+	private IIcon coverBlockIcon;
 	private String iconName;
 
 	Stencil(String iconName) {
@@ -32,18 +32,18 @@ public enum Stencil {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IconRegister register) {
+	public void registerBlockIcons(IIconRegister register) {
 		blockIcon = register.registerIcon("openblocks:stencil_" + iconName);
 		coverBlockIcon = register.registerIcon("openblocks:stencilcover_" + iconName);
 	}
 
 	@SideOnly(Side.CLIENT)
-	public Icon getCoverBlockIcon() {
+	public IIcon getCoverBlockIcon() {
 		return coverBlockIcon;
 	}
 
 	@SideOnly(Side.CLIENT)
-	public Icon getBlockIcon() {
+	public IIcon getBlockIcon() {
 		return blockIcon;
 	}
 

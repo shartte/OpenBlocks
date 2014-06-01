@@ -4,12 +4,14 @@ import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatMessageComponent;
-import net.minecraftforge.common.ForgeDirection;
+
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.shapes.GuideShape;
 import openmods.api.IActivateAwareTile;
 import openmods.shapes.IShapeable;
@@ -121,8 +123,8 @@ public class TileEntityGuide extends SyncedTileEntity implements IShapeable, IAc
 
 	private void switchMode(EntityPlayer player) {
 		switchMode();
-		player.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("openblocks.misc.change_mode", getCurrentMode().getLocalizedName()));
-		player.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("openblocks.misc.total_blocks", shape.size()));
+		player.addChatMessage(new ChatComponentTranslation("openblocks.misc.change_mode", getCurrentMode().getLocalizedName()));
+		player.addChatMessage(new ChatComponentTranslation("openblocks.misc.total_blocks", shape.size()));
 	}
 
 	private void switchMode() {
@@ -141,8 +143,8 @@ public class TileEntityGuide extends SyncedTileEntity implements IShapeable, IAc
 
 	private void changeDimensions(EntityPlayer player, ForgeDirection orientation) {
 		changeDimensions(orientation);
-		player.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("openblocks.misc.change_size", width.getValue(), height.getValue(), depth.getValue()));
-		player.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("openblocks.misc.total_blocks", shape.size()));
+		player.addChatMessage(new ChatComponentTranslation("openblocks.misc.change_size", width.getValue(), height.getValue(), depth.getValue()));
+		player.addChatMessage(new ChatComponentTranslation("openblocks.misc.total_blocks", shape.size()));
 	}
 
 	private static void inc(SyncableInt v) {
@@ -239,10 +241,10 @@ public class TileEntityGuide extends SyncedTileEntity implements IShapeable, IAc
 		if (shape == null) recreateShape();
 
 		final ItemBlock itemBlock = (ItemBlock)heldItem;
-		final int blockId = itemBlock.getBlockID();
+		final Block block = itemBlock.field_150939_a; // TODO: Obfuscated, was "getBlock"
 		final int blockMeta = itemBlock.getMetadata(heldStack.getItemDamage());
 		for (Coord coord : shape)
-			worldObj.setBlock(xCoord + coord.x, yCoord + coord.y, zCoord + coord.z, blockId, blockMeta, BlockNotifyFlags.ALL);
+			worldObj.setBlock(xCoord + coord.x, yCoord + coord.y, zCoord + coord.z, block, blockMeta, BlockNotifyFlags.ALL);
 	}
 
 	protected void changeColor(int color) {
@@ -251,7 +253,7 @@ public class TileEntityGuide extends SyncedTileEntity implements IShapeable, IAc
 	}
 
 	private boolean isInFillMode() {
-		return worldObj.getBlockId(xCoord, yCoord + 1, zCoord) == Block.obsidian.blockID;
+		return worldObj.getBlock(xCoord, yCoord + 1, zCoord) == Blocks.obsidian;
 	}
 
 	@Override

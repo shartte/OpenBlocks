@@ -4,8 +4,9 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 
 import org.lwjgl.opengl.GL11;
 
@@ -45,11 +46,9 @@ public class ModelCartographer extends ModelBase {
 			GL11.glScalef(SCALE * 3, SCALE * 3, SCALE);
 
 			Tessellator tes = new Tessellator();
-			tes.xOffset = -0.5;
-			tes.zOffset = 0.25f;
-			tes.yOffset = -0.5;
+      tes.setTranslation(-0.5, -0.5, 0.25f);
 
-			final Icon icon = Item.eyeOfEnder.getIconFromDamage(0);
+			final IIcon icon = Items.ender_eye.getIconFromDamage(0);
 			ItemRenderer.renderItemIn2D(
 					tes,
 					icon.getInterpolatedU(15), icon.getInterpolatedV(2),

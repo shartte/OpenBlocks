@@ -3,12 +3,13 @@ package openblocks.rubbish;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
-import net.minecraftforge.event.ForgeSubscribe;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import openblocks.OpenBlocks;
@@ -43,12 +44,12 @@ public class BrickManager {
 		return (prop instanceof BowelContents)? (BowelContents)prop : null;
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onEntityConstruct(EntityEvent.EntityConstructing evt) {
 		if (evt.entity instanceof EntityPlayer) evt.entity.registerExtendedProperties(BOWELS_PROPERTY, new BowelContents());
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onEntityDeath(LivingDropsEvent evt) {
 		if (evt.entity.worldObj.isRemote) return;
 		IExtendedEntityProperties prop = evt.entity.getExtendedProperties(BOWELS_PROPERTY);
@@ -79,7 +80,7 @@ public class BrickManager {
 		return false;
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onPlayerScared(PlayerActionEvent evt) {
 		if (evt.type == Type.BOO) {
 			EntityPlayer player = (EntityPlayer)evt.player;
@@ -96,7 +97,7 @@ public class BrickManager {
 	}
 
 	private static EntityItem createBrick(Entity dropper) {
-		ItemStack brick = new ItemStack(Item.brick);
+		ItemStack brick = new ItemStack(Items.brick);
 		EntityItem drop = ItemUtils.createDrop(dropper, brick);
 		double rotation = Math.toRadians(dropper.rotationYaw) - Math.PI / 2;
 		double dx = Math.cos(rotation);

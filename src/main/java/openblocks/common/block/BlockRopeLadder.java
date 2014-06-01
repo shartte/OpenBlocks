@@ -6,11 +6,11 @@ import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import openblocks.Config;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.common.tileentity.TileEntityRopeLadder;
 import openmods.utils.BlockUtils;
 import cpw.mods.fml.relauncher.Side;
@@ -19,9 +19,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class BlockRopeLadder extends OpenBlock {
 
 	public BlockRopeLadder() {
-		super(Config.blockRopeLadderId, Material.circuits);
+		super(Material.circuits);
 		setHardness(0.4F);
-		setStepSound(soundLadderFootstep);
+		setStepSound(Blocks.ladder.stepSound);
 		setRotationMode(BlockRotationMode.FOUR_DIRECTIONS);
 		setPlacementMode(BlockPlacementMode.SURFACE);
 	}
@@ -36,7 +36,7 @@ public class BlockRopeLadder extends OpenBlock {
 	}
 
 	@Override
-	public boolean isLadder(World world, int x, int y, int z, EntityLivingBase entity) {
+	public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity) {
 		return true;
 	}
 
@@ -45,10 +45,10 @@ public class BlockRopeLadder extends OpenBlock {
 		return false;
 	}
 
-	@Override
-	public int idDropped(int par1, Random par2Random, int par3) {
-		return -1;
-	}
+  @Override
+  public int quantityDropped(Random random) {
+    return 0;
+  }
 
 	@Override
 	public boolean isOpaqueCube() {

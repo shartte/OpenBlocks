@@ -5,8 +5,8 @@ import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.IIcon;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.OpenBlocks;
 import openblocks.common.block.BlockFlag;
 import openmods.api.IActivateAwareTile;
@@ -39,7 +39,7 @@ public class TileEntityFlag extends SyncedTileEntity implements ISurfaceAttachme
 	@Override
 	public void onSynced(Set<ISyncableObject> changes) {}
 
-	public Icon getIcon() {
+	public IIcon getIcon() {
 		return OpenBlocks.Blocks.flag.getIcon(0, 0);
 	}
 

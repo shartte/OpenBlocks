@@ -78,8 +78,8 @@ public class EntityGoldenEye extends EntitySmoothMove {
 
 	private void targetStructure(Entity owner, ChunkPosition target) {
 		double playerY = owner.posY + 1.62 - owner.yOffset;
-		double dx = target.x - owner.posX;
-		double dz = target.z - owner.posZ;
+		double dx = target.chunkPosX - owner.posX;
+		double dz = target.chunkPosZ - owner.posZ;
 		double dist = Math.sqrt(dx * dx + dz * dz);
 		dx /= dist;
 		dz /= dist;
@@ -108,7 +108,14 @@ public class EntityGoldenEye extends EntitySmoothMove {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean isInRangeToRenderVec3D(Vec3 vec) {
+  public boolean isInRangeToRender3d(double p_145770_1_, double p_145770_3_, double p_145770_5_) {
 		return true;
 	}
+
+  @Override
+  @SideOnly(Side.CLIENT)
+  public boolean isInRangeToRenderDist(double par1) {
+    return true;
+  }
+
 }

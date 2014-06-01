@@ -8,9 +8,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import openblocks.api.IPointable;
 import openblocks.common.entity.EntityItemProjectile;
 import openmods.api.ISurfaceAttachment;
@@ -181,12 +181,12 @@ public class TileEntityCannon extends SyncedTileEntity implements IPointable, IS
 
 	@Override
 	public void onPointingStart(ItemStack itemStack, EntityPlayer player) {
-		player.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("openblocks.misc.selected_cannon"));
+		player.addChatMessage(new ChatComponentTranslation("openblocks.misc.selected_cannon"));
 	}
 
 	@Override
 	public void onPointingEnd(ItemStack itemStack, EntityPlayer player, int x, int y, int z) {
-		player.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("openblocks.misc.pointed_cannon", x, y, z));
+		player.addChatMessage(new ChatComponentTranslation("openblocks.misc.pointed_cannon", x, y, z));
 		setTarget(x, y, z);
 	}
 

@@ -1,7 +1,14 @@
 package openblocks.common.entity;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 
+import com.google.common.base.Throwables;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -30,7 +37,7 @@ public abstract class EntityAssistant extends EntitySmoothMove implements IEntit
 		super(world);
 		this.cachedOwner = new WeakReference<EntityPlayer>(owner);
 
-		if (owner != null) this.owner = owner.getEntityName();
+		if (owner != null) this.owner = owner.getDisplayName();
 	}
 
 	public EntityPlayer findOwner() {
@@ -105,14 +112,24 @@ public abstract class EntityAssistant extends EntitySmoothMove implements IEntit
 	}
 
 	@Override
-	public void writeSpawnData(ByteArrayDataOutput data) {
-		data.writeUTF(Strings.nullToEmpty(owner));
-	}
+	public void writeSpawnData(ByteBuf data) {
+    DataOutput dout = new ByteBufOutputStream(data);
+    try {
+      dout.writeUTF(Strings.nullToEmpty(owner));
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
+    }
+  }
 
 	@Override
-	public void readSpawnData(ByteArrayDataInput data) {
-		owner = data.readUTF();
-	}
+	public void readSpawnData(ByteBuf data) {
+    DataInput din = new ByteBufInputStream(data);
+    try {
+      owner = din.readUTF();
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
+    }
+  }
 
 	public void setSpawnPosition(Entity owner) {
 		setPosition(owner.posX + 1, owner.posY + owner.getEyeHeight(), owner.posZ);

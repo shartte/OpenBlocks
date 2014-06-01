@@ -9,7 +9,8 @@ import java.util.List;
 
 import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChatComponentTranslation;
+
 import openmods.Log;
 
 import com.google.common.collect.Lists;
@@ -59,7 +60,7 @@ public class CommandInventory implements ICommand {
 			String id = args[2];
 			try {
 				if (PlayerInventoryStore.instance.restoreInventory(player, id)) {
-					sender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("openblocks.misc.restored_inventory", playerName));
+					sender.addChatMessage(new ChatComponentTranslation("openblocks.misc.restored_inventory", playerName));
 				} else throw new CommandException("openblocks.misc.cant_restore", playerName);
 			} catch (Exception e) {
 				Log.warn(e, "Failed to restore inventory, player %s, file %s", playerName, id);
@@ -68,10 +69,10 @@ public class CommandInventory implements ICommand {
 		} else if (subCommand.equalsIgnoreCase(COMMAND_STORE)) {
 			try {
 				File result = PlayerInventoryStore.instance.storePlayerInventory(player);
-				sender.sendChatToPlayer(
-						ChatMessageComponent.createFromTranslationWithSubstitutions(
-								"openblocks.misc.stored_inventory",
-								result.getAbsolutePath()));
+				sender.addChatMessage(
+            new ChatComponentTranslation(
+                "openblocks.misc.stored_inventory",
+                result.getAbsolutePath()));
 			} catch (Exception e) {
 				Log.warn(e, "Failed to store inventory, player %s, file %s", playerName);
 				throw new CommandException("openblocks.misc.cant_Store", playerName);

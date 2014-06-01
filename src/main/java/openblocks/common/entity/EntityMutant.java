@@ -1,7 +1,14 @@
 package openblocks.common.entity;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.util.HashMap;
 
+import com.google.common.base.Throwables;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.passive.EntityTameable;
@@ -53,8 +60,8 @@ public class EntityMutant extends EntityTameable implements IEntityAdditionalSpa
 	@Override
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
-		getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(10.0D);
-		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.25D);
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(10.0D);
+		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.25D);
 	}
 
 	@Override
@@ -63,24 +70,34 @@ public class EntityMutant extends EntityTameable implements IEntityAdditionalSpa
 	}
 
 	@Override
-	public void writeSpawnData(ByteArrayDataOutput data) {
-		data.writeUTF(getEntityIdForClass(head));
-		data.writeUTF(getEntityIdForClass(body));
-		data.writeUTF(getEntityIdForClass(arms));
-		data.writeUTF(getEntityIdForClass(wings));
-		data.writeUTF(getEntityIdForClass(legs));
-		data.writeUTF(getEntityIdForClass(tail));
-	}
+	public void writeSpawnData(ByteBuf buf) {
+    DataOutput data = new ByteBufOutputStream(buf);
+    try {
+      data.writeUTF(getEntityIdForClass(head));
+      data.writeUTF(getEntityIdForClass(body));
+      data.writeUTF(getEntityIdForClass(arms));
+      data.writeUTF(getEntityIdForClass(wings));
+      data.writeUTF(getEntityIdForClass(legs));
+      data.writeUTF(getEntityIdForClass(tail));
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
+    }
+  }
 
 	@Override
-	public void readSpawnData(ByteArrayDataInput data) {
-		head = getEntityClassForId(data.readUTF());
-		body = getEntityClassForId(data.readUTF());
-		arms = getEntityClassForId(data.readUTF());
-		wings = getEntityClassForId(data.readUTF());
-		legs = getEntityClassForId(data.readUTF());
-		tail = getEntityClassForId(data.readUTF());
-	}
+	public void readSpawnData(ByteBuf buf) {
+    DataInput data = new ByteBufInputStream(buf);
+    try {
+      head = getEntityClassForId(data.readUTF());
+      body = getEntityClassForId(data.readUTF());
+      arms = getEntityClassForId(data.readUTF());
+      wings = getEntityClassForId(data.readUTF());
+      legs = getEntityClassForId(data.readUTF());
+      tail = getEntityClassForId(data.readUTF());
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
+    }
+  }
 
 	private static String getEntityIdForClass(Class<? extends EntityLivingBase> klazz) {
 		return Objects.firstNonNull((String)EntityList.classToStringMapping.get(klazz), "");
@@ -172,8 +189,4 @@ public class EntityMutant extends EntityTameable implements IEntityAdditionalSpa
 		tail = getEntityClassForId(tag.getString("tail"));
 	}
 
-	@Override
-	public Entity getOwner() {
-		return func_130012_q();
-	}
 }

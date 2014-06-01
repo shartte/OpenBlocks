@@ -6,10 +6,11 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.event.ForgeSubscribe;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import openblocks.common.entity.EntityTorchArrow;
@@ -18,7 +19,7 @@ public class BowEventHandler {
 
 	Random rand = new Random();
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onArrowNock(ArrowNockEvent event) {
 		if (!event.entity.worldObj.isRemote) {
 			NBTTagCompound tag = event.result.getTagCompound();
@@ -28,7 +29,7 @@ public class BowEventHandler {
 		}
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onArrowLoose(ArrowLooseEvent event) {
 		// System.out.println("onArrowLoose");
 		EntityPlayer player = event.entityPlayer;
@@ -60,7 +61,7 @@ public class BowEventHandler {
 		boolean flag = player.capabilities.isCreativeMode
 				|| EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, bowStack) > 0;
 
-		if (flag || player.inventory.hasItem(Item.arrow.itemID)) {
+		if (flag || player.inventory.hasItem(Items.arrow)) {
 			float f = j / 20.0F;
 			f = (f * f + f * 2.0F) / 3.0F;
 
@@ -99,7 +100,7 @@ public class BowEventHandler {
 			if (flag) {
 				entityarrow.canBePickedUp = 2;
 			} else {
-				player.inventory.consumeInventoryItem(Item.arrow.itemID);
+				player.inventory.consumeInventoryItem(Items.arrow);
 			}
 
 			if (!player.worldObj.isRemote) {

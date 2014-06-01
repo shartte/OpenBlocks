@@ -1,6 +1,6 @@
 package openblocks.common.item;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -14,13 +14,13 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ItemInfoBook extends Item {
 
 	public ItemInfoBook() {
-		super(Config.itemInfoBookId);
+
 		setCreativeTab(OpenBlocks.tabOpenBlocks);
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister registry) {
+	public void registerIcons(IIconRegister registry) {
 		itemIcon = registry.registerIcon("openblocks:info_book");
 	}
 

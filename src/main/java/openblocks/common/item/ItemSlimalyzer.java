@@ -1,10 +1,10 @@
 package openblocks.common.item;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -15,23 +15,23 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemSlimalyzer extends Item {
 
-	public Icon on;
-	public Icon off;
+	public IIcon on;
+	public IIcon off;
 
 	public ItemSlimalyzer() {
-		super(Config.itemSlimalyzerId);
+
 		setCreativeTab(OpenBlocks.tabOpenBlocks);
 	}
 
 	@Override
-	public void registerIcons(IconRegister register) {
+	public void registerIcons(IIconRegister register) {
 		off = register.registerIcon("openblocks:slimeoff");
 		on = register.registerIcon("openblocks:slimeon");
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public Icon getIconFromDamage(int dmg) {
+	public IIcon getIconFromDamage(int dmg) {
 		return dmg == 0? off : on;
 	}
 

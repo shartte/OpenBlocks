@@ -6,16 +6,15 @@ import java.util.logging.Logger;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
+import org.apache.logging.log4j.LogManager;
 
 //must be higher than one in openmodslib
 @SortingIndex(32)
 public class OpenBlocksCorePlugin implements IFMLLoadingPlugin {
 
-	public static Logger log;
-	static {
-		log = Logger.getLogger("OpenBlocksCore");
-		log.setParent(FMLLog.getLogger());
-	}
+  public static org.apache.logging.log4j.Logger log = LogManager.getLogger("OpenBlocksCore");
+
+  // TODO: Cannot set logger parent to FML without serious gymnastics
 
 	@Override
 	public String[] getASMTransformerClass() {
@@ -35,7 +34,12 @@ public class OpenBlocksCorePlugin implements IFMLLoadingPlugin {
 	@Override
 	public void injectData(Map<String, Object> data) {}
 
-	@Deprecated
+  @Override
+  public String getAccessTransformerClass() {
+    return null;
+  }
+
+  @Deprecated
 	public String[] getLibraryRequestClass() {
 		return null;
 	}

@@ -19,7 +19,7 @@ public class CrayonGlassesRecipe extends ShapelessRecipes {
 	private static List<ItemStack> createFakeIngredientsList() {
 		ItemStack block = new ItemStack(Blocks.imaginary, 1, ItemImaginary.DAMAGE_CRAYON);
 		ItemImaginary.setupValues(0x00FFFF, block);
-		return Lists.newArrayList(new ItemStack(Item.paper), block);
+		return Lists.newArrayList(new ItemStack(net.minecraft.init.Items.paper), block);
 	}
 
 	private static ItemStack createFakeResult() {
@@ -43,7 +43,7 @@ public class CrayonGlassesRecipe extends ShapelessRecipes {
 							|| ItemImaginary.getUses(stack) < ItemImaginary.CRAFTING_COST) return false;
 
 					gotCrayon = true;
-				} else if (stack.getItem() == Item.paper) {
+				} else if (stack.getItem() == net.minecraft.init.Items.paper) {
 					if (gotPaper) return false;
 
 					gotPaper = true;
